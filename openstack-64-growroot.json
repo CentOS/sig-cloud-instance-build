@@ -1,0 +1,22 @@
+{
+"script": "",
+"distro": "centos",
+"release": "6",
+"schedule": "0",
+"update": "yes",
+"notify_u": "",
+"image_tag": "testing",
+"type": "kvm",
+"notify_e": "",
+"extra": {
+        "vendor": "CentOS",
+        "disk_type": "qcow2",
+        "disk_size": "10",
+        "compression": "bzip2",
+        "deliver": "pickup",
+        "xtra_opts": "noipv6",
+        "networks": {
+                "net_0": "dhcp"
+                }
+        }
+}
