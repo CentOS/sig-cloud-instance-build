@@ -65,6 +65,10 @@ reboot
 %end
 
 %post
+# randomize root password and lock root account
+tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1 | passwd --stdin root
+passwd -l root
+
 # cleanup unwanted stuff
 
 # ami-creator requires grub during the install, so we remove it (and
