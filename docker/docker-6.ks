@@ -66,8 +66,11 @@ reboot
 
 %post
 # randomize root password and lock root account
-tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1 | passwd --stdin root
+dd if=/dev/urandom count=50 | md5sum | passwd --stdin root
 passwd -l root
+
+# create necessary devices
+/sbin/MAKEDEV /dev/console
 
 # cleanup unwanted stuff
 
