@@ -69,6 +69,9 @@ reboot
 dd if=/dev/urandom count=50 | md5sum | passwd --stdin root
 passwd -l root
 
+# create necessary devices
+/sbin/MAKEDEV /dev/console
+
 # cleanup unwanted stuff
 
 # ami-creator requires grub during the install, so we remove it (and
