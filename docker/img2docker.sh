@@ -21,6 +21,6 @@ mount -o loop "$image" "$mount"
 
 cd "$mount"
 tar -cpSf - --acls --selinux --xattrs * | docker import - "$tag"
-cd -
+cd - >& /dev/null
 umount "$mount"
 rmdir "$mount"
