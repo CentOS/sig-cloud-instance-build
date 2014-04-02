@@ -85,16 +85,24 @@ rm -rf /boot
 rpm -e MAKEDEV ethtool upstart initscripts iputils policycoreutils iptables \
     iproute
 
+# Remove files that are known to take up lots of space but leave
+# directories intact since those may be required by new rpms.
+
 # locales
-rm -rf /usr/{{lib,share}/locale,{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive}
-#  docs
-rm -rf /usr/share/{man,doc,info,gnome/help}
+find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
+        -type f | xargs /bin/rm
+
+#  man pages and documentation
+find /usr/share/{man,doc,info,gnome/help} \
+        -type f | xargs /bin/rm
+
 #  cracklib
-rm -rf /usr/share/cracklib
-#  i18n
-rm -rf /usr/share/i18n
+find /usr/share/cracklib \
+        -type f | xargs /bin/rm
+
 #  sln
-rm -rf /sbin/sln
+rm -f /sbin/sln
+
 #  ldconfig
 rm -rf /etc/ld.so.cache
 rm -rf /var/cache/ldconfig/*
