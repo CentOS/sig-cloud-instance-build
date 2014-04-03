@@ -1,5 +1,5 @@
 install
-url --url=http://mirrors.karan.org/centos/6/os/x86_64/
+url --url=http://mirror.centos.org/centos/6/os/x86_64/
 lang en_US.UTF-8
 keyboard uk
 network --device eth0 --bootproto dhcp
@@ -8,7 +8,7 @@ firewall --service=ssh
 authconfig --enableshadow --passalgo=sha512 --enablefingerprint
 selinux --enforcing
 timezone --utc Europe/London
-repo --name="CentOS" --baseurl=http://mirrors.karan.org/centos/6/os/x86_64/ --cost=100
+repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/6/os/x86_64/ --cost=100
 clearpart --all --initlabel
 part / --fstype ext4 --size=1024 --grow
 reboot
