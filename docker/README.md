@@ -17,7 +17,7 @@ When building on a CentOS host you will need [EPEL](https://fedoraproject.org/wi
     appliance-tools
     libguestfs-tools-c
 
-NOTE - At this time, applliance-tools is still working on making its way into 
+NOTE - At this time, appliance-tools is still working on making its way into 
 EPEL official and can be obtained from [here](http://maxamillion.fedorapeople.org/epel/el6/appliance-tools/)
 in the mean time.
 
