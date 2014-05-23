@@ -18,7 +18,11 @@ mount="$(mktemp -d --tmpdir)"
 mount -o loop "$image" "$mount"
 
 cd "$mount"
-tar -cpSf - --acls --selinux --xattrs * | bzip2 > ${image}.tar.bz2
+#this tar seems to cause issues such as rpmdb corruption
+#tar -cpSf - --acls --selinux --xattrs * | bzip2 > ${image}.tar.bz2
+
+# This one appears to work fine for docker creation
+tar --numeric owner -c . | bzip2 > ${image}.tar.bz2
 cd - >& /dev/null
 umount "$mount"
 rmdir "$mount"
