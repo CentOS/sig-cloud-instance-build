@@ -4,11 +4,16 @@ lang en_US.UTF-8
 keyboard uk
 network --device eth0 --bootproto dhcp
 rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
-firewall --service=ssh
 authconfig --enableshadow --passalgo=sha512 --enablefingerprint
 selinux --enforcing
 timezone --utc Europe/London
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/6/os/x86_64/ --cost=100
+repo --name="Updates" --baseurl=http://mirror.centos.org/centos-6/6/updates/x86_64/ --cost=100
+# CentOSPlus is here ONLY for a libselinux patch.
+# Once 6.6 is released, this should be removed
+# http://lists.centos.org/pipermail/centos-devel/2014-May/010345.html
+repo --name="CentOSPlus" --baseurl=http://mirror.centos.org/centos-6/6/centosplus/x86_64/ --cost=1000
+
 clearpart --all --initlabel
 part / --fstype ext4 --size=1024 --grow
 reboot
