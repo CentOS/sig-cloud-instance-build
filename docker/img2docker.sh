@@ -24,7 +24,7 @@ cd "$mount"
 #this tar seems to cause issues such as rpmdb corruption
 #tar -cpSf - --acls --selinux --xattrs * | docker import - "$tag"
 
-tar --numeric owner -c . | docker import - "$tag"
+tar --numeric-owner -c . | docker import - "$tag"
 
 cd - >& /dev/null
 umount "$mount"
