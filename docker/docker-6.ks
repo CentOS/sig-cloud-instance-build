@@ -108,6 +108,12 @@ find /usr/share/cracklib \
 #  sln
 rm -f /sbin/sln
 
+#  yum metadata
+rm -rf /var/lib/yum/*
+
+#  rpm db
+rpm --rebuilddb
+
 #  ldconfig
 rm -rf /etc/ld.so.cache
 rm -rf /var/cache/ldconfig/*
