@@ -12,46 +12,17 @@ part / --fstype ext4 --size=1024 --grow
 reboot
 
 %packages  --excludedocs --nobase
-@core
--cronie
--dhclient
--efibootmgr
--ethtool
--initscripts
--iproute
--iptables
--kexec-tools
--dracut-network
--mozjs17
--polkit
--polkit-pkla-compat
--iputils
--kbd
--openssh-server
--postfix
--policycoreutils
--rsyslog
--selinux-policy
--selinux-policy-targeted
--sudo
--vim-minimal
--*-firmware
+bind-utils
+bash
+yum
+vim-minimal
+centos-release
+shadow-utils
+less
 -kernel*
--NetworkManager
--tuned
--parted
--ModemManager-glib
--ppp
--wpa_supplicant
--teamd
--libteam
--gsettings-desktop-schemas
--glib-networking
--libsoup
--dnsmasq
--man-db
-
-
+-*firmware
+grub2
+-os-prober
 
 
 %end
@@ -67,16 +38,15 @@ passwd -l root
 # cleanup unwanted stuff
 
 # ami-creator requires grub during the install, so we remove it (and
-# its dependencies) in %post
-yum -y remove  grub centos-logos iproute wpa_supplicant NetworkManager \
-  iptables mozjs17 ppp teamd
-rm -rf /boot
+# its dependencies) in %post 
 
 # some packages get installed even though we ask for them not to be,
 # and they don't have any external dependencies that should make
 # anaconda install them
-rpm -e MAKEDEV ethtool upstart initscripts iputils policycoreutils iptables \
-    iproute
+
+yum -y remove  grub2 centos-logos hwdata
+
+rm -rf /boot
 
 # Remove files that are known to take up lots of space but leave
 # directories intact since those may be required by new rpms.
@@ -90,8 +60,8 @@ find /usr/share/{man,doc,info,gnome/help} \
         -type f | xargs /bin/rm
 
 #  cracklib
-find /usr/share/cracklib \
-        -type f | xargs /bin/rm
+#find /usr/share/cracklib \
+#        -type f | xargs /bin/rm
 
 #  sln
 rm -f /sbin/sln
