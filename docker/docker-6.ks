@@ -18,30 +18,18 @@ clearpart --all --initlabel
 part / --fstype ext4 --size=1024 --grow
 reboot
 %packages  --excludedocs --nobase
-@Core
+vim-minimal
+yum
+bash
+bind-utils
+grub
+centos-release
+shadow-utils
+findutils
+iputils
+grub
 -*-firmware
--b43-openfwwf
--cronie
--dhclient
--efibootmgr
--ethtool
--initscripts
--iproute
--iptables
--iptables-ipv6
--iputils
--kbd
--kernel*
--openssh-server
--postfix
--policycoreutils
--redhat-logos
--rsyslog
--selinux-policy
--selinux-policy-targeted
--sudo
--upstart
--vim-minimal
+
 %end
 
 %post
@@ -62,23 +50,28 @@ rm -rf /boot
 # some packages get installed even though we ask for them not to be,
 # and they don't have any external dependencies that should make
 # anaconda install them
-rpm -e MAKEDEV ethtool upstart initscripts iputils policycoreutils iptables \
+rpm -e ethtool policycoreutils iptables \
     iproute
+
+# Keep yum from installing documentation. It takes up too much space.
+sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 
 # Remove files that are known to take up lots of space but leave
 # directories intact since those may be required by new rpms.
 
 # locales
-find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
-        -type f | xargs /bin/rm
+#find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
+#        -type f \( ! -iname "*utf*" ! -name "en_US" ! -name\) | xargs /bin/rm
+
+rm -f /usr/lib/locale/locale-archive
 
 #  man pages and documentation
 find /usr/share/{man,doc,info,gnome/help} \
         -type f | xargs /bin/rm
 
 #  cracklib
-find /usr/share/cracklib \
-        -type f | xargs /bin/rm
+#find /usr/share/cracklib \
+#        -type f | xargs /bin/rm
 
 #  sln
 rm -f /sbin/sln

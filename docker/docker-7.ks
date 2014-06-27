@@ -23,7 +23,9 @@ less
 -*firmware
 grub2
 -os-prober
-
+-gettext*
+-bind-license
+-freetype
 
 %end
 
@@ -44,16 +46,26 @@ passwd -l root
 # and they don't have any external dependencies that should make
 # anaconda install them
 
-yum -y remove  grub2 centos-logos hwdata
+
+yum -y remove  grub2 centos-logos hwdata os-prober gettext* \
+  bind-license freetype
 
 rm -rf /boot
+
+
+# Add tsflags to keep yum from installing docs
+
+sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 
 # Remove files that are known to take up lots of space but leave
 # directories intact since those may be required by new rpms.
 
 # locales
-find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
-        -type f \( ! -iname "*utf*" ! -name "en_US" \) | xargs /bin/rm
+#find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
+#        -type f \( ! -iname "*utf*" ! -name "en_US" \) | xargs /bin/rm
+
+
+rm -f /usr/lib/locale/locale-archive
 
 #  man pages and documentation
 find /usr/share/{man,doc,info,gnome/help} \
