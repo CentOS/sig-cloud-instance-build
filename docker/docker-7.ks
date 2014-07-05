@@ -4,7 +4,8 @@ network  --bootproto=dhcp --device=eth0 --onboot=on
 rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
 timezone Europe/London --isUtc 
 selinux --enforcing
-repo --name "CentOS" --baseurl=http://buildlogs.centos.org/centos/7/os/x86_64-latest/
+repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
+repo --name="Updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
 
 
 clearpart --all --initlabel
