@@ -1,1 +1,2 @@
-centos7.include
+yum-utils
+wget

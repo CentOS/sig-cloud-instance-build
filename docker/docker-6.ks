@@ -60,18 +60,11 @@ sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 # directories intact since those may be required by new rpms.
 
 # locales
-#find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
-#        -type f \( ! -iname "*utf*" ! -name "en_US" ! -name\) | xargs /bin/rm
-
 rm -f /usr/lib/locale/locale-archive
 
 #  man pages and documentation
 find /usr/share/{man,doc,info,gnome/help} \
         -type f | xargs /bin/rm
-
-#  cracklib
-#find /usr/share/cracklib \
-#        -type f | xargs /bin/rm
 
 #  sln
 rm -f /sbin/sln
@@ -79,5 +72,24 @@ rm -f /sbin/sln
 #  ldconfig
 rm -rf /etc/ld.so.cache
 rm -rf /var/cache/ldconfig/*
+
+
+# Add centosplus repo enabled by default, with includepkg for
+# libselinux updates until this patch lands in upstream.
+
+
+cat >/etc/yum.repos.d/libselinux.repo <<EOF
+[libselinux]
+name=CentOS-\$releasever - libselinux
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=centosplus
+#baseurl=http://mirror.centos.org/centos/\$releasever/centosplus/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+includepkgs=libselinux*
+
+EOF
+
+
 
 %end
