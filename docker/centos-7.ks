@@ -27,6 +27,8 @@ grub2
 -gettext*
 -bind-license
 -freetype
+iputils
+iproute
 
 %end
 
@@ -62,11 +64,21 @@ sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 # directories intact since those may be required by new rpms.
 
 # locales
-#find /usr/{{lib,share}/{i18n,locale},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
-#        -type f \( ! -iname "*utf*" ! -name "en_US" \) | xargs /bin/rm
+# nuking the locales breaks things. Lets not do that anymore
+# strip most of the languages from the archive.
+localedef --delete-from-archive $(localedef --list-archive | \
+grep -v -i ^en | xargs )
+# prep the archive template
+mv /usr/lib/locale/locale-archive  /usr/lib/locale/locale-archive.tmpl
+# rebuild archive
+/usr/sbin/build-locale-archive
+#empty the template
+:>/usr/lib/locale/locale-archive.tmpl
 
 
-rm -f /usr/lib/locale/locale-archive
+
+
+
 
 #  man pages and documentation
 find /usr/share/{man,doc,info,gnome/help} \

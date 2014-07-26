@@ -27,8 +27,10 @@ centos-release
 shadow-utils
 findutils
 iputils
+iproute
 grub
 -*-firmware
+passwd
 
 %end
 
@@ -50,8 +52,8 @@ rm -rf /boot
 # some packages get installed even though we ask for them not to be,
 # and they don't have any external dependencies that should make
 # anaconda install them
-rpm -e ethtool policycoreutils iptables \
-    iproute
+rpm -e policycoreutils passwd
+    
 
 # Keep yum from installing documentation. It takes up too much space.
 sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
@@ -60,7 +62,18 @@ sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 # directories intact since those may be required by new rpms.
 
 # locales
-rm -f /usr/lib/locale/locale-archive
+#rm -f /usr/lib/locale/locale-archive
+
+# nuking the locales breaks things. Lets not do that anymore
+# strip most of the languages from the archive.
+localedef --delete-from-archive $(localedef --list-archive | \
+grep -v -i ^en | xargs )
+# prep the archive template
+mv /usr/lib/locale/locale-archive  /usr/lib/locale/locale-archive.tmpl
+# rebuild archive
+/usr/sbin/build-locale-archive
+#empty the template
+:>/usr/lib/locale/locale-archive.tmpl
 
 #  man pages and documentation
 find /usr/share/{man,doc,info,gnome/help} \
