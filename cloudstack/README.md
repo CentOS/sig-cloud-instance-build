@@ -2,8 +2,8 @@
 
 In this directory are kickstart files to create CloudStack templates/images for creating [CentOS](http://www.centos.org) guests in a [CloudStack](http://cloudstack.apache.org) cloud.
 
-* [CentOS 6](/cloudstack-6-x86_64.ks)
-* [CentOS 7](/cloudstack-7-x86_64.ks) in beta
+* [CentOS 6](./cloudstack-6-x86_64.ks)
+* [CentOS 7](./cloudstack-7-x86_64.ks) in beta
 
 # Third-party repository
 
