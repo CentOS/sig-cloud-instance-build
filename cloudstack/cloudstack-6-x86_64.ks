@@ -7,9 +7,9 @@ keyboard us
 timezone --utc GMT
 
 
-url --url=http://mirrors.coreix.net/centos/6/os/x86_64/
-repo --name=Updates --baseurl=http://mirrors.coreix.net/centos/6/updates/x86_64/
-repo --name=epel --baseurl=http://mirrors.coreix.net/fedora-epel/6/x86_64/
+url --url=http://mirror.centos.org/centos/6/os/x86_64/
+repo --name=Updates --baseurl=http://mirror.centos.org/centos/6/updates/x86_64/
+repo --name=epel --baseurl=http://dl.fedoraproject.org/pub/epel/6/x86_64/
 # firewall disabled, leaving the cloud platform to do this
 firewall --disabled
 
