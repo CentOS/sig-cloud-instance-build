@@ -232,7 +232,7 @@ sed -i 's/^hiddenmenu$/hiddenmenu\nserial\ --unit=0\ --speed=115200\ --word=8\ -
 
 #handle the cloud-init stuff
 echo 'disable_root: 0' > /etc/cloud/cloud.cfg.d/01_centos.cfg
-echo 'user: root' > /etc/cloud/cloud.cfg.d/01_centos.cfg
+echo 'user: root' >> /etc/cloud/cloud.cfg.d/01_centos.cfg
 
 rm -f /mnt/sysimage/root/*
 %end
