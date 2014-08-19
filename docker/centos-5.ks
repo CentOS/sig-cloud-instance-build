@@ -1,5 +1,5 @@
 install
-url --url=http://monster.centos.lab/centos/5/os/x86_64/
+url --url=http://mirror.centos.org/centos/5/os/x86_64/
 lang en_US.UTF-8
 keyboard uk
 network --device eth0 --bootproto dhcp
@@ -7,8 +7,9 @@ rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
 authconfig --enableshadow --passalgo=sha512
 selinux --enforcing
 timezone --utc Europe/London
-repo --name="CentOS" --baseurl=http://monster.centos.lab/centos/5/os/x86_64/ --cost=100
-repo --name="Updates" --baseurl=http://monster.centos.lab/centos/5/updates/x86_64/ --cost=100
+repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/5/os/x86_64/ --cost=100
+repo --name="Updates" --baseurl=http://mirror.centos.org/centos/5/updates/x86_64/ --cost=100
+repo --name="selinux" --baseurl=http://mirror.centos.org/centos/5/centosplus/x86_64/ --cost=100
 
 clearpart --all --initlabel
 part / --fstype ext4 --size=1024 --grow
@@ -27,7 +28,8 @@ iproute
 grub
 -*-firmware
 passwd
-
+libselinux-utils
+-kernel
 
 %end
 
@@ -92,6 +94,22 @@ rm -f /sbin/sln
 #  ldconfig
 rm -rf /etc/ld.so.cache
 rm -rf /var/cache/ldconfig/*
+
+# Add centosplus repo enabled by default, with includepkg for
+# libselinux updates until this patch lands in upstream.
+
+
+cat >/etc/yum.repos.d/libselinux.repo <<EOF
+[libselinux]
+name=CentOS-\$releasever - libselinux
+mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=centosplus
+#baseurl=http://mirror.centos.org/centos/\$releasever/centosplus/\$basearch/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
+includepkgs=libselinux*
+
+EOF
 
 
 %end
