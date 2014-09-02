@@ -69,7 +69,10 @@ rpm -e policycoreutils passwd openldap libuser iscsi-initiator-utils \
     
 
 # Keep yum from installing documentation. It takes up too much space.
-#sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
+sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
+
+#Generate installtime file record
+/bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
 
 
 

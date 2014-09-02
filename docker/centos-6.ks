@@ -61,6 +61,9 @@ sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 # Remove files that are known to take up lots of space but leave
 # directories intact since those may be required by new rpms.
 
+#Generate installtime file record
+/bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
+
 # locales
 #rm -f /usr/lib/locale/locale-archive
 

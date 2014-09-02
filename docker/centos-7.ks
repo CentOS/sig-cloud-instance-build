@@ -6,6 +6,7 @@ timezone Europe/London --isUtc
 selinux --enforcing
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
 repo --name="Updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
+repo --name="fakesystemd" --baseurl=http://dev.centos.org/centos/7/fakesystemd/ --cost=100
 
 
 clearpart --all --initlabel
@@ -29,6 +30,8 @@ grub2
 -freetype
 iputils
 iproute
+-systemd
+fakesystemd
 
 %end
 
@@ -76,7 +79,8 @@ mv /usr/lib/locale/locale-archive  /usr/lib/locale/locale-archive.tmpl
 :>/usr/lib/locale/locale-archive.tmpl
 
 
-
+#Generate installtime file record
+/bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
 
 
 
