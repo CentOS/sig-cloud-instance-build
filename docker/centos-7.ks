@@ -54,7 +54,7 @@ passwd -l root
 
 
 yum -y remove  grub2 centos-logos hwdata os-prober gettext* \
-  bind-license freetype
+  bind-license freetype kmod dracut
 
 rm -rf /boot
 
