@@ -14,7 +14,7 @@ repo --name="selinux" --baseurl=http://mirror.centos.org/centos/5/centosplus/x86
 clearpart --all --initlabel
 part / --fstype ext4 --size=1024 --grow
 reboot
-%packages  --excludedocs --nobase
+%packages  --nobase
 vim-minimal
 yum
 bash
@@ -68,8 +68,10 @@ rpm -e policycoreutils passwd openldap libuser iscsi-initiator-utils \
   mkinitrd
 
 
+# Can't remove docs on c5 due to a bug similar to 
+# https://bugzilla.redhat.com/show_bug.cgi?id=515911
 # Keep yum from installing documentation. It takes up too much space.
-sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
+#sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 
 #Generate installtime file record
 /bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
