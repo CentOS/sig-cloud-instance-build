@@ -4,6 +4,7 @@ network  --bootproto=dhcp --device=eth0 --onboot=on
 rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
 timezone Europe/London --isUtc 
 selinux --enforcing
+firewall --disabled
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
 repo --name="Updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
 repo --name="fakesystemd" --baseurl=http://dev.centos.org/centos/7/fakesystemd/ --cost=100
@@ -32,6 +33,7 @@ iputils
 iproute
 -systemd
 fakesystemd
+firewalld
 
 %end
 
@@ -55,6 +57,16 @@ passwd -l root
 
 yum -y remove  grub2 centos-logos hwdata os-prober gettext* \
   bind-license freetype kmod dracut
+
+
+# firewalld is necessary for building on centos7 but it is not
+# necessary in the image. remove it and its requirements.
+
+yum -y remove  firewalld dbus-glib dbus-python ebtables \
+  gobject-introspection libselinux-python pygobject3-base \
+  python-decorator python-slip python-slip-dbus
+rm -rf /etc/firewalld
+
 
 rm -rf /boot
 
