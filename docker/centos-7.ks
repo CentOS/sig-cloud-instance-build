@@ -116,6 +116,9 @@ rm -rf /var/cache/ldconfig/*
 # Clean up after the installer.
 rm -f /etc/rpm/macros.imgcreate
 
+# temp fix for systemd /run/lock
+mkdir /run/lock
+chmod 755 /run/lock
 
 
 %end
