@@ -12,7 +12,7 @@ repo --name="Updates" --baseurl=http://mirror.centos.org/centos-6/6/updates/x86_
 # CentOSPlus is here ONLY for a libselinux patch.
 # Once 6.6 is released, this should be removed
 # http://lists.centos.org/pipermail/centos-devel/2014-May/010345.html
-repo --name="CentOSPlus" --baseurl=http://mirror.centos.org/centos-6/6/centosplus/x86_64/ --cost=1000
+#repo --name="CentOSPlus" --baseurl=http://mirror.centos.org/centos-6/6/centosplus/x86_64/ --cost=1000
 
 clearpart --all --initlabel
 part / --fstype ext4 --size=1024 --grow
@@ -94,17 +94,17 @@ rm -rf /var/cache/ldconfig/*
 # libselinux updates until this patch lands in upstream.
 
 
-cat >/etc/yum.repos.d/libselinux.repo <<EOF
-[libselinux]
-name=CentOS-\$releasever - libselinux
-mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=centosplus
-#baseurl=http://mirror.centos.org/centos/\$releasever/centosplus/\$basearch/
-gpgcheck=1
-enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-includepkgs=libselinux*
-
-EOF
+#cat >/etc/yum.repos.d/libselinux.repo <<EOF
+#[libselinux]
+#name=CentOS-\$releasever - libselinux
+#mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=centosplus
+##baseurl=http://mirror.centos.org/centos/\$releasever/centosplus/\$basearch/
+#gpgcheck=1
+#enabled=1
+#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+#includepkgs=libselinux*
+#
+#EOF
 
 
 
