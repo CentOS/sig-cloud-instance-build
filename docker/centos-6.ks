@@ -31,6 +31,7 @@ iproute
 grub
 -*-firmware
 passwd
+rootfiles
 
 %end
 
@@ -106,6 +107,7 @@ rm -rf /var/cache/ldconfig/*
 #
 #EOF
 
-
+# Clean up after the installer.
+rm -f /etc/rpm/macros.imgcreate
 
 %end

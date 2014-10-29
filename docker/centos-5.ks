@@ -30,6 +30,7 @@ grub
 passwd
 libselinux-utils
 -kernel
+rootfiles
 
 %end
 
@@ -115,6 +116,10 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
 includepkgs=libselinux*
 
 EOF
+
+# Clean up after the installer.
+rm -f /etc/rpm/macros.imgcreate
+
 
 
 %end
