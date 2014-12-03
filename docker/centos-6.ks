@@ -6,7 +6,7 @@ network --device eth0 --bootproto dhcp
 rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
 authconfig --enableshadow --passalgo=sha512 --enablefingerprint
 selinux --enforcing
-timezone --utc Europe/London
+timezone --utc UTC
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/6/os/x86_64/ --cost=100
 repo --name="Updates" --baseurl=http://mirror.centos.org/centos-6/6/updates/x86_64/ --cost=100
 # CentOSPlus is here ONLY for a libselinux patch.
