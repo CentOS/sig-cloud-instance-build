@@ -6,7 +6,6 @@ timezone UTC --isUtc
 selinux --enforcing
 firewall --disabled
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
-repo --name="Updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
 repo --name="systemdcontainer" --baseurl=http://dev.centos.org/centos/7/systemd-container/ --cost=100
 
 
