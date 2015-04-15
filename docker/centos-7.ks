@@ -73,8 +73,6 @@ rm -rf /boot
 
 #delete a few systemd things
 rm -rf /etc/machine-id
-rm -rf /usr/lib/systemd/system/multi-user.target.wants/getty.target
-rm -rf /usr/lib/systemd/system/multi-user.target.wants/systemd-logind.service
 
 # Add tsflags to keep yum from installing docs
 
@@ -116,6 +114,19 @@ rm -f /sbin/sln
 rm -rf /etc/ld.so.cache
 rm -rf /var/cache/ldconfig/*
 rm -rf /var/cache/yum/* 
+
+# Create repo for systemd-container
+cat >/etc/yum.repos.d/systemd.repo <<EOF
+[systemdcontainer]
+name=CentOS-\$releasever - systemd-container
+baseurl=http://dev.centos.org/centos/7/systemd-container/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+EOF
+
+
 
 # Clean up after the installer.
 rm -f /etc/rpm/macros.imgcreate
