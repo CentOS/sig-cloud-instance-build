@@ -35,6 +35,7 @@ iproute
 systemd-container
 firewalld
 rootfiles
+passwd
 
 %end
 
@@ -57,7 +58,7 @@ passwd -l root
 
 
 yum -y remove  grub2 centos-logos hwdata os-prober gettext* \
-  bind-license freetype kmod dracut
+  bind-license freetype kmod dracut passwd
 
 
 # firewalld is necessary for building on centos7 but it is not
