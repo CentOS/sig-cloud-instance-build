@@ -22,7 +22,8 @@ cd "$mount"
 #tar -cpSf - --acls --selinux --xattrs * | bzip2 > ${image}.tar.bz2
 
 # This one appears to work fine for docker creation
-tar --numeric-owner -c . | bzip2 > ${image}.tar.bz2
+# hacked by jefby,change the output file to /tmp/xxx.tar.bz2
+tar --numeric-owner -c . | bzip2 > /tmp/${image}.tar.bz2
 cd - >& /dev/null
 umount "$mount"
 rmdir "$mount"
