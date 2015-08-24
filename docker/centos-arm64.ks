@@ -6,7 +6,9 @@ timezone UTC --isUtc
 selinux --enforcing
 firewall --disabled
 #repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
-repo --name="CentOS" --baseurl=ftp://192.168.3.1/centos7forARM/   --cost=100
+#repo --name="CentOS" --baseurl=ftp://192.168.3.1/centos7forARM/   --cost=100
+repo --name="CentOS" --baseurl=http://buildlogs.centos.org/centos/7/os/aarch64/   --cost=100
+# here you must download from my shared rpm package,and create a localrepo . and MAKEDEV rpm package
 repo --name="systemdcontainer" --baseurl=ftp://192.168.3.1/systemd-container/ --cost=100
 #repo --name="systemdcontainer" --baseurl=http://dev.centos.org/centos/7/systemd-container/ --cost=100
 
