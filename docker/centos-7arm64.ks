@@ -5,12 +5,9 @@ rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
 timezone UTC --isUtc 
 selinux --enforcing
 firewall --disabled
-#repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
-#repo --name="CentOS" --baseurl=ftp://192.168.3.1/centos7forARM/   --cost=100
-repo --name="CentOS" --baseurl=http://buildlogs.centos.org/centos/7/os/aarch64/   --cost=100
-# here you must download from my shared rpm package,and create a localrepo . and MAKEDEV rpm package
-repo --name="systemdcontainer" --baseurl=ftp://192.168.3.1/systemd-container/ --cost=100
-#repo --name="systemdcontainer" --baseurl=http://dev.centos.org/centos/7/systemd-container/ --cost=100
+repo --name="CentOS" --baseurl=http://mirror.centos.org/altarch/7/os/aarch64/
+repo --name="Updates" --baseurl=http://mirror.centos.org/altarch/7/updates/aarch64/
+repo --name="systemdcontainer" --baseurl=http://dev.centos.org/altarch/7/systemd-container/ --cost=100
 
 
 clearpart --all --initlabel
@@ -36,13 +33,8 @@ iputils
 iproute
 -systemd
 systemd-container
-firewalld
 rootfiles
-findutils
-grep
-coreutils
 passwd
-MAKEDEV
 
 %end
 
@@ -55,9 +47,6 @@ passwd -l root
 /sbin/MAKEDEV /dev/console
 
 # cleanup unwanted stuff
-
-# ami-creator requires grub during the install, so we remove it (and
-# its dependencies) in %post 
 
 # some packages get installed even though we ask for them not to be,
 # and they don't have any external dependencies that should make
@@ -114,8 +103,8 @@ mv /usr/lib/locale/locale-archive  /usr/lib/locale/locale-archive.tmpl
 #        -type f | xargs /bin/rm
 
 #  cracklib
-find /usr/share/cracklib \
-        -type f | xargs /bin/rm
+#find /usr/share/cracklib \
+#        -type f | xargs /bin/rm
 
 #  sln
 rm -f /sbin/sln
