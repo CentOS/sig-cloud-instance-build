@@ -5,7 +5,7 @@ This repository contains the kickstart files needed to build a CentOS Docker con
 
 ## Necessary tools
 
-This README uses ami-creator from `https://github.com/katzj/ami-creator`, however other tools will work as well.
+This README uses [ami-creator](https://github.com/katzj/ami-creator), however other tools will work as well.
 The ami-creator was chosen early on, working well for 5, 6, and 7 when run on a CentOS-6 host. You will at least 10G of free space for the build.
 
 Additionally, the following packages are needed:
