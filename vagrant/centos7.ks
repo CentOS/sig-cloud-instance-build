@@ -30,6 +30,7 @@ reboot
 deltarpm
 bash-completion
 man-pages
+bzip2
 @core
 
 %end
