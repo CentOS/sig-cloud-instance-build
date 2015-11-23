@@ -34,6 +34,7 @@ bzip2
 @core
 rsync
 screen
+nfs-utils
 
 %end
 
