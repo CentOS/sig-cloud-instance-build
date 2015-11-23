@@ -18,5 +18,5 @@ koji -p cbs image-build \
   --repo http://mirror.centos.org/centos/7/updates/x86_64/\
   --scratch \
   --nowait \
-  --disk-size=10
+  --disk-size=40
 
