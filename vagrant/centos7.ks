@@ -32,6 +32,8 @@ bash-completion
 man-pages
 bzip2
 @core
+rsync
+screen
 
 %end
 
