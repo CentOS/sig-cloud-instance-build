@@ -30,7 +30,7 @@ build_vagrant_image()
     --format=rhevm-ova \
     --ova-option vsphere_ova_format=vagrant-virtualbox \
     --ova-option rhevm_ova_format=vagrant-libvirt \
-    --ova-option vagrant_sync_directory=/home/vagrant/sync \
+    --ova-option vagrant_sync_directory=/vagrant \
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/extras/x86_64/\
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/updates/x86_64/\
     --scratch \
