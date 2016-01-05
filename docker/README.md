@@ -5,37 +5,31 @@ This repository contains the kickstart files needed to build a CentOS Docker con
 
 ## Necessary tools
 
-This README uses [ami-creator](https://github.com/katzj/ami-creator), however other tools will work as well.
-The ami-creator was chosen early on, working well for 5, 6, and 7 when run on a CentOS-6 host. You will at least 10G of free space for the build.
+The Docker base containers for 6 and 7 are now created with tools included in CentOS itself. This means we're no longer dependent on the 3rd party [ami-creator](https://github.com/katzj/ami-creator). 
 
-Additionally, the following packages are needed:
+The following packages and dependencies are needed:
 
  * libguestfs-tools-c
- * python-imgcreate
- * compat-db43 ( for CentOS-5 containers only )
+ * lorax
+ * virt-install
 
 
 ## Build
 
-Building the docker container is a two step procesure. First, we generate an image. Second, we tar it up.
+Building the docker container is a 3 step procesure. First we fetch the boot.iso for the version we're building. Next, we generate an image. Finally, we tar it up. In the example below, we'll build a base archive for 7.
 
 --
 ```bash
-/path/to/ami_creator.py -c /path/to/centos-kickstart.ks -n centos-version-name
+# curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -o /tmp/boot7.iso
+# livemedia-creator --make-disk --iso=/tmp/boot7.iso --ks=/path/to/centos-7.ks --image-name=centos-7-base
+# virt-tar-out -a /var/tmp/centos-7-base / - | xz --best > centos-version-docker.tar.xz
 ```
 --
 
-The ami_creator will use the kickstart and the repositories listed inside to create and install the image. If it completes successfully, you will have a container named `centos-version-name.img` in your directory.
 
-From here, this must be extracted and compressed. This is done using `virt-tar-out`.
 
---
-```bash
-virt-tar-out -a centos-version-name.img / - | xz --best > centos-version-docker.tar.xz
-```
---
 
-Once this is done, you can delete the `.img` file as it is no longer needed.
+Once this is done, you can delete the `boot.iso` and `/var/tmp/centos-7-base` file as it is no longer needed.
 
 
 ## Usage
