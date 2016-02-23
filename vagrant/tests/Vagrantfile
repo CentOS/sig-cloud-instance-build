@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  # Vagrant will create a VM with two network interfaces: the first
+  # configured with NAT, the second configured as host-only, with the 
+  # fixed IP you specify. 192.168.56.0/24 is the default host-only
+  # network block in Virtualbox, but you can specify any other block,
+  # and Vagrant will automatically configure it.
+  config.vm.network "private_network", ip:"192.168.56.2"
+
+  config.vm.provider "virtualbox" do |v|
+    # OS X shows some TSC instability which affects RedHat kernels.
+    # The VirtualBox developers recommended enabling HPET as a workaround.
+    # You might also need to boot the guest kernel with the no_timer_check
+    # boot parameter to avoid occasional kernel panics (see
+    # https://lists.fedoraproject.org/pipermail/cloud/2014-June/003974.html)
+    v.customize(["modifyvm", :id, "--hpet", "on"])
+    v.memory = 1024
+  end
+end
