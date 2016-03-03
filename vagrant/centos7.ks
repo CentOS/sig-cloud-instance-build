@@ -12,7 +12,7 @@ selinux --enforcing
 timezone --utc America/New_York
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
-bootloader --location=mbr --append="console=tty0 console=ttyS0,115200 net.ifnames=0 biosdevname=0"
+bootloader --location=mbr --append="no_timer_check console=tty0 console=ttyS0,115200 net.ifnames=0 biosdevname=0"
 zerombr
 clearpart --all --drives=vda
 
@@ -39,21 +39,24 @@ nfs-utils
 %end
 
 %post
-# Needed to allow this to boot a second time with an unknown MAC
-grep -v HWADDR /etc/sysconfig/network-scripts/ifcfg-eth0 > /tmp/ifcfg-eth0
-mv -f /tmp/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0
 
 # sudo
 echo "%vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
 sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
+
+# Fix for https://github.com/CentOS/sig-cloud-instance-build/issues/38
+cat > /etc/sysconfig/network-scripts/ifcfg-eth0 << EOF
+DEVICE="eth0"
+BOOTPROTO="dhcp"
+ONBOOT="yes"
+TYPE="Ethernet"
+PERSISTENT_DHCLIENT="yes"
+EOF
 
 # Default insecure vagrant key
 mkdir -m 0700 -p /home/vagrant/.ssh
 echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" >> /home/vagrant/.ssh/authorized_keys
 chmod 600 /home/vagrant/.ssh/authorized_keys
 chown -R vagrant:vagrant /home/vagrant/.ssh
-
-# Bind the eth0 connection to the eth0 device (#24)
-nmcli connection modify eth0 connection.interface-name eth0
 
 %end
