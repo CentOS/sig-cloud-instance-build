@@ -1,0 +1,13 @@
+FROM scratch
+
+MAINTAINER https://github.com/CentOS/sig-cloud-instance-images
+
+ADD @@TARBALL@@ /
+
+LABEL name="CentOS Base Image" \
+    vendor="CentOS" \
+    license="GPLv2" \
+    build-date="@@DATE@@"
+
+
+CMD ["/bin/bash"]
