@@ -61,4 +61,7 @@ chown -R vagrant:vagrant /home/vagrant/.ssh
 # wrong SELinux context (see "Known Issues" in the CentOS 6 release notes)
 restorecon -vR /home/vagrant/.ssh
 
+# Indicate that vagrant6 infra is being used
+echo 'vag6' > /etc/yum/vars/infra
+
 %end
