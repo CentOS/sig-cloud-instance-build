@@ -34,6 +34,7 @@ bzip2
 rsync
 screen
 nfs-utils
+tuned
 
 %end
 
@@ -60,5 +61,9 @@ chown -R vagrant:vagrant /home/vagrant/.ssh
 # Workaround for SSH pubkey auth not working, due to .ssh having the
 # wrong SELinux context (see "Known Issues" in the CentOS 6 release notes)
 restorecon -vR /home/vagrant/.ssh
+
+# Enable and configure tuned
+chkconfig tuned on
+tuned-adm profile virtual-guest
 
 %end
