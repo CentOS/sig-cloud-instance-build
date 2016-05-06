@@ -61,6 +61,6 @@ chown -R vagrant:vagrant /home/vagrant/.ssh
 
 # let systemd set a new machine-id
 rm /etc/machine-id
-echo 'vag7' > /etc/yum/vars/infra
+echo 'vag' > /etc/yum/vars/infra
 
 %end
