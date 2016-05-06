@@ -63,7 +63,7 @@ chown -R vagrant:vagrant /home/vagrant/.ssh
 restorecon -vR /home/vagrant/.ssh
 
 # Indicate that vagrant6 infra is being used
-echo 'vag6' > /etc/yum/vars/infra
+echo 'vag' > /etc/yum/vars/infra
 
 # Enable and configure tuned
 chkconfig tuned on
