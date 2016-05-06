@@ -19,7 +19,7 @@ clearpart --all --drives=vda
 user --name=vagrant --password=vagrant
 
 part biosboot --fstype=biosboot --size=1
-part /boot --fstype ext4 --size=200 --ondisk=vda
+part /boot --fstype ext4 --size=250 --ondisk=vda
 part pv.2 --size=1 --grow --ondisk=vda
 volgroup VolGroup00 --pesize=32768 pv.2
 logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=768 --grow --maxsize=1536
@@ -34,6 +34,7 @@ bzip2
 rsync
 screen
 nfs-utils
+tuned
 
 %end
 
@@ -63,5 +64,9 @@ restorecon -vR /home/vagrant/.ssh
 
 # Indicate that vagrant6 infra is being used
 echo 'vag6' > /etc/yum/vars/infra
+
+# Enable and configure tuned
+chkconfig tuned on
+tuned-adm profile virtual-guest
 
 %end
