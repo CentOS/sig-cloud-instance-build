@@ -59,8 +59,12 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4
 chmod 600 /home/vagrant/.ssh/authorized_keys
 chown -R vagrant:vagrant /home/vagrant/.ssh
 
-# let systemd set a new machine-id
-rm /etc/machine-id
+# systemd should generate a new machine id during the first boot, to
+# avoid having multiple Vagrant instances with the same id in the local
+# network. /etc/machine-id should be empty, but it must exist to prevent
+# boot errors (e.g.  systemd-journald failing to start).
+:>/etc/machine-id
+
 echo 'vag' > /etc/yum/vars/infra
 
 %end
