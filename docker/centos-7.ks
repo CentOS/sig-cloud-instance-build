@@ -1,5 +1,5 @@
-# This is a minimal CentOS kickstart designed for docker. 
-# It will not produce a bootable system 
+# This is a minimal CentOS kickstart designed for docker.
+# It will not produce a bootable system
 # To use this kickstart, run the following command
 # livemedia-creator --make-tar \
 #   --iso=/path/to/boot.iso  \
@@ -91,7 +91,7 @@ passwd -l root
 awk '(NF==0&&!done){print "override_install_langs='$LANG'\ntsflags=nodocs";done=1}{print}' \
     < /etc/yum.conf > /etc/yum.conf.new
 mv /etc/yum.conf.new /etc/yum.conf
-
+echo 'container' > /etc/yum/vars/infra
 
 rm -f /usr/lib/locale/locale-archive
 
@@ -101,7 +101,9 @@ localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
 rm -rf /var/cache/yum/*
 rm -f /tmp/ks-script*
 rm -rf /var/log/*
-rm -rf /tmp/* 
+rm -rf /tmp/*
+rm -rf /etc/sysconfig/network-scripts/ifcfg-*
+
 
 #Generate installtime file record
 /bin/date +%Y%m%d_%H%M > /etc/BUILDTIME

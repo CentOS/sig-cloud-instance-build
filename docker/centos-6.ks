@@ -23,7 +23,7 @@ network --bootproto=dhcp --device=eth0 --activate --onboot=on
 reboot
 bootloader --location=none
 
-# Repositories to use 
+# Repositories to use
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/6/os/x86_64/ --cost=100
 repo --name="Updates" --baseurl=http://mirror.centos.org/centos/6/updates/x86_64/ --cost=100
 
@@ -48,6 +48,7 @@ grub
 passwd
 rootfiles
 util-linux-ng
+yum-plugin-ovl
 
 %end
 
@@ -80,7 +81,7 @@ passwd -l root
 awk '(NF==0&&!done){print "override_install_langs='$LANG'\ntsflags=nodocs";done=1}{print}' \
     < /etc/yum.conf > /etc/yum.conf.new
 mv /etc/yum.conf.new /etc/yum.conf
-
+echo 'container' > /etc/yum/vars/infra
 
 rm -f /usr/lib/locale/locale-archive
 
@@ -89,6 +90,7 @@ localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
 
 rm -rf /var/cache/yum/*
 rm -f /tmp/ks-script*
+rm -rf /etc/sysconfig/network-scripts/ifcfg-*
 
 #Generate installtime file record
 /bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
