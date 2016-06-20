@@ -10,7 +10,7 @@ firewall --disabled
 authconfig --enableshadow --enablemd5
 selinux --enforcing
 timezone --utc UTC
-services --enabled ntpd
+services --enabled ntpd,tuned
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
 bootloader --location=mbr --append="no_timer_check console=tty0 console=ttyS0,115200 net.ifnames=0 biosdevname=0"
@@ -66,8 +66,7 @@ restorecon -vR /home/vagrant/.ssh
 # Indicate that vagrant6 infra is being used
 echo 'vag' > /etc/yum/vars/infra
 
-# Enable and configure tuned
-chkconfig tuned on
+# Configure tuned
 tuned-adm profile virtual-guest
 
 %end
