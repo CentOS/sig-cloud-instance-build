@@ -9,7 +9,8 @@ rootpw %ROOTPW%
 firewall --disabled
 authconfig --enableshadow --enablemd5
 selinux --enforcing
-timezone --utc America/New_York
+timezone --utc UTC
+services --enabled ntpd
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
 bootloader --location=mbr --append="no_timer_check console=tty0 console=ttyS0,115200 net.ifnames=0 biosdevname=0"
