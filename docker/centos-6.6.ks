@@ -17,7 +17,6 @@ vim-minimal
 yum
 bash
 bind-utils
-grub
 centos-release
 shadow-utils
 findutils
