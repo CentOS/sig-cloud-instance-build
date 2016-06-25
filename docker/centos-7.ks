@@ -104,11 +104,13 @@ rm -rf /var/log/*
 rm -rf /tmp/*
 rm -rf /etc/sysconfig/network-scripts/ifcfg-*
 
+# Fix /run/lock breakage since it's not tmpfs in docker
+umount /run
+systemd-tmpfiles --create --boot
+
 
 #Generate installtime file record
 /bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
-
-
 
 
 :> /etc/machine-id
