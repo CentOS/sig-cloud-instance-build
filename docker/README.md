@@ -5,7 +5,7 @@ This repository contains the kickstart files needed to build a CentOS Docker con
 
 ## Necessary tools
 
-The Docker base containers for 6 and 7 are now created with tools included in CentOS itself. This means we're no longer dependent on the 3rd party [ami-creator](https://github.com/katzj/ami-creator). 
+The Docker base containers for 6 and 7 are now created with tools included in CentOS itself. This means we're no longer dependent on the 3rd party [ami-creator](https://github.com/katzj/ami-creator).
 
 The following packages and dependencies are needed:
 
@@ -16,20 +16,36 @@ The following packages and dependencies are needed:
 
 ## Build
 
-Building the docker container is a 3 step procesure. First we fetch the boot.iso for the version we're building. Next, we generate an image. Finally, we tar it up. In the example below, we'll build a base archive for 7.
+In order to build the container, a rootfs tarball and Dockerfile are required.
+We use lorax's livemedia-creator to create the rootfs tarball, but you'll need
+a boot.iso start the process. Below you can find a set of example commands
+that will produce a suitable rootfs tarball. Additionally you can also run the
+containerbuild.sh script, which will fetch the iso, create the rootfs, and
+generate a Dockerfile for you.
 
+### The hard way
 --
 ```bash
 # curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -o /tmp/boot7.iso
-# livemedia-creator --make-disk --iso=/tmp/boot7.iso --ks=/path/to/centos-7.ks --image-name=centos-7-base
-# virt-tar-out -a /var/tmp/centos-7-base / - | xz --best > centos-version-docker.tar.xz
+# sudo livemedia-creator --make-tar --iso=/tmp/boot7.iso --ks=/path/to/centos-7.ks --image-name=centos-7-docker.tar.xz
 ```
 --
 
+Once livemedia-creator has finished, you can use the Dockerfile-TEMPLATE to
+create a suitable Dockerfile.
 
+### The easy way
 
+After you've run this command, your rootfs tarball and Dockerfile will be
+waiting for you in `/var/tmp/containers/<datestamp>/`
 
-Once this is done, you can delete the `boot.iso` and `/var/tmp/centos-7-base` file as it is no longer needed.
+--
+```bash
+# sudo ./containerbuild.sh centos-7.ks
+```
+--
+
+Once this is done, you can delete the `boot.iso` files in /tmp if you wish.
 
 
 ## Usage
