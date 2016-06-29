@@ -1,23 +1,38 @@
-install
-url --url=http://mirror.centos.org/centos/6/os/x86_64/
-lang en_US.UTF-8
-keyboard uk
-network --device eth0 --bootproto dhcp
-rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
-authconfig --enableshadow --passalgo=sha512 --enablefingerprint
-selinux --enforcing
-timezone --utc UTC
-repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/6/os/x86_64/ --cost=100
-repo --name="Updates" --baseurl=http://mirror.centos.org/centos-6/6/updates/x86_64/ --cost=100
-# CentOSPlus is here ONLY for a libselinux patch.
-# Once 6.6 is released, this should be removed
-# http://lists.centos.org/pipermail/centos-devel/2014-May/010345.html
-#repo --name="CentOSPlus" --baseurl=http://mirror.centos.org/centos-6/6/centosplus/x86_64/ --cost=1000
+# This is a minimal CentOS kickstart designed for docker.
+# It will not produce a bootable system
+# To use this kickstart, run the following command
+# livemedia-creator --make-tar \
+#   --iso=/path/to/boot.iso  \
+#   --ks=centos-7.ks \
+#   --image-name=centos-root.tar.xz
+#
+# Once the image has been generated, it can be imported into docker
+# by using: cat centos-root.tar.xz | docker import -i imagename
 
-clearpart --all --initlabel
-part / --fstype ext4 --size=1024 --grow
+# Basic setup information
+url --url="http://mirrors.kernel.org/centos/6/os/x86_64/"
+install
+keyboard us
+lang en_US.UTF-8
+rootpw --lock --iscrypted locked
+authconfig --enableshadow --passalgo=sha512
+timezone --isUtc Etc/UTC
+selinux --enforcing
+firewall --disabled
+network --bootproto=dhcp --device=eth0 --activate --onboot=on
 reboot
-%packages  --excludedocs --nobase
+bootloader --location=none
+
+# Repositories to use
+repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/6/os/x86_64/ --cost=100
+repo --name="Updates" --baseurl=http://mirror.centos.org/centos/6/updates/x86_64/ --cost=100
+
+# Disk setup
+zerombr
+clearpart --all
+part / --size 3000 --fstype ext4
+
+%packages  --excludedocs --nobase --nocore
 vim-minimal
 yum
 bash
@@ -31,82 +46,52 @@ grub
 -*-firmware
 passwd
 rootfiles
+util-linux-ng
+yum-plugin-ovl
 
 %end
 
-%post
-# randomize root password and lock root account
+%post --log=/tmp/anaconda-post.log
+# Post configure tasks for Docker
+
+# remove stuff we don't need that anaconda insists on
+# kernel needs to be removed by rpm, because of grubby
+rpm -e kernel
+
+yum -y remove dhclient dhcp-libs dracut grubby kmod grub2 centos-logos \
+  hwdata os-prober gettext* bind-license freetype kmod-libs dracut
+
+yum -y remove  firewalld dbus-glib dbus-python ebtables \
+  gobject-introspection libselinux-python pygobject3-base \
+  python-decorator python-slip python-slip-dbus kpartx linux-firmware \
+  device-mapper* e2fsprogs-libs sysvinit-tools
+
+#clean up unused directories
+rm -rf /boot
+rm -rf /etc/firewalld
+
+# Randomize root's password and lock
 dd if=/dev/urandom count=50 | md5sum | passwd --stdin root
 passwd -l root
 
-# create necessary devices
-/sbin/MAKEDEV /dev/console
+#LANG="en_US"
+#echo "%_install_lang $LANG" > /etc/rpm/macros.image-language-conf
 
-# cleanup unwanted stuff
+awk '(NF==0&&!done){print "override_install_langs='$LANG'\ntsflags=nodocs";done=1}{print}' \
+    < /etc/yum.conf > /etc/yum.conf.new
+mv /etc/yum.conf.new /etc/yum.conf
+echo 'container' > /etc/yum/vars/infra
 
-# ami-creator requires grub during the install, so we remove it (and
-# its dependencies) in %post
-rpm -e grub redhat-logos
-rm -rf /boot
+rm -f /usr/lib/locale/locale-archive
 
-# some packages get installed even though we ask for them not to be,
-# and they don't have any external dependencies that should make
-# anaconda install them
-rpm -e policycoreutils passwd
-    
+#Setup locale properly
+localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
 
-# Keep yum from installing documentation. It takes up too much space.
-sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
-
-# Remove files that are known to take up lots of space but leave
-# directories intact since those may be required by new rpms.
+rm -rf /var/cache/yum/*
+rm -f /tmp/ks-script*
+rm -rf /etc/sysconfig/network-scripts/ifcfg-*
 
 #Generate installtime file record
 /bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
-
-# locales
-#rm -f /usr/lib/locale/locale-archive
-
-# nuking the locales breaks things. Lets not do that anymore
-# strip most of the languages from the archive.
-localedef --delete-from-archive $(localedef --list-archive | \
-grep -v -i ^en | xargs )
-# prep the archive template
-mv /usr/lib/locale/locale-archive  /usr/lib/locale/locale-archive.tmpl
-# rebuild archive
-/usr/sbin/build-locale-archive
-#empty the template
-:>/usr/lib/locale/locale-archive.tmpl
-
-#  man pages and documentation
-find /usr/share/{man,doc,info,gnome/help} \
-        -type f | xargs /bin/rm
-
-#  sln
-rm -f /sbin/sln
-
-#  ldconfig
-rm -rf /etc/ld.so.cache
-rm -rf /var/cache/ldconfig/*
-
-
-# Add centosplus repo enabled by default, with includepkg for
-# libselinux updates until this patch lands in upstream.
-
-
-#cat >/etc/yum.repos.d/libselinux.repo <<EOF
-#[libselinux]
-#name=CentOS-\$releasever - libselinux
-#mirrorlist=http://mirrorlist.centos.org/?release=\$releasever&arch=\$basearch&repo=centosplus
-##baseurl=http://mirror.centos.org/centos/\$releasever/centosplus/\$basearch/
-#gpgcheck=1
-#enabled=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
-#includepkgs=libselinux*
-#
-#EOF
-
-# Clean up after the installer.
-rm -f /etc/rpm/macros.imgcreate
 
 %end

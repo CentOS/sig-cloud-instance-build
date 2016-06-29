@@ -5,37 +5,48 @@ This repository contains the kickstart files needed to build a CentOS Docker con
 
 ## Necessary tools
 
-This README uses [ami-creator](https://github.com/katzj/ami-creator), however other tools will work as well.
-The ami-creator was chosen early on, working well for 5, 6, and 7 when run on a CentOS-6 host. You will at least 10G of free space for the build.
+The Docker base containers for 6 and 7 are now created with tools included in CentOS itself. This means we're no longer dependent on the 3rd party [ami-creator](https://github.com/katzj/ami-creator).
+This method does NOT work for CentOS-5 base containers.
 
-Additionally, the following packages are needed:
+The following packages and dependencies are needed:
 
  * libguestfs-tools-c
- * python-imgcreate
- * compat-db43 ( for CentOS-5 containers only )
+ * lorax
+ * virt-install
 
 
 ## Build
 
-Building the docker container is a two step procesure. First, we generate an image. Second, we tar it up.
+In order to build the container, a rootfs tarball and Dockerfile are required.
+We use lorax's livemedia-creator to create the rootfs tarball, but you'll need
+a boot.iso start the process. Below you can find a set of example commands
+that will produce a suitable rootfs tarball. Additionally you can also run the
+containerbuild.sh script, which will fetch the iso, create the rootfs, and
+generate a Dockerfile for you.
 
+### The hard way
 --
 ```bash
-/path/to/ami_creator.py -c /path/to/centos-kickstart.ks -n centos-version-name
+# curl http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso -o /tmp/boot7.iso
+# sudo livemedia-creator --make-tar --iso=/tmp/boot7.iso --ks=/path/to/centos-7.ks --image-name=centos-7-docker.tar.xz
 ```
 --
 
-The ami_creator will use the kickstart and the repositories listed inside to create and install the image. If it completes successfully, you will have a container named `centos-version-name.img` in your directory.
+Once livemedia-creator has finished, you can use the Dockerfile-TEMPLATE to
+create a suitable Dockerfile.
 
-From here, this must be extracted and compressed. This is done using `virt-tar-out`.
+### The easy way
+
+After you've run this command, your rootfs tarball and Dockerfile will be
+waiting for you in `/var/tmp/containers/<datestamp>/`
 
 --
 ```bash
-virt-tar-out -a centos-version-name.img / - | xz --best > centos-version-docker.tar.xz
+# sudo ./containerbuild.sh centos-7.ks
 ```
 --
 
-Once this is done, you can delete the `.img` file as it is no longer needed.
+Once this is done, you can delete the `boot.iso` files in /tmp if you wish.
 
 
 ## Usage
