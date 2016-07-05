@@ -36,6 +36,7 @@ rsync
 screen
 nfs-utils
 chrony
+yum-utils
 
 %end
 
