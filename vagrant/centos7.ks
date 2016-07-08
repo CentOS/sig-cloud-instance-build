@@ -5,7 +5,7 @@ keyboard us
 lang en_US.UTF-8
 skipx
 network --device eth0 --bootproto dhcp
-rootpw %ROOTPW%
+rootpw --plaintext vagrant
 firewall --disabled
 authconfig --enableshadow --enablemd5
 selinux --enforcing
