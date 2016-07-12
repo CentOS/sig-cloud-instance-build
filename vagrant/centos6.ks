@@ -54,11 +54,19 @@ TYPE="Ethernet"
 PERSISTENT_DHCLIENT="yes"
 EOF
 
-# sshd: disable password authentication
+# sshd: disable password authentication and DNS checks
 ex -s /etc/ssh/sshd_config <<-EOF
 	:%substitute/^\(PasswordAuthentication\) yes$/\1 no/
+	:%substitute/^#\(UseDNS\) yes$/&\r\1 no/
 	:update
 	:quit
+EOF
+cat >>/etc/sysconfig/sshd <<-EOF
+
+	# Decrease connection time by preventing reverse DNS lookups
+	# (see https://lists.centos.org/pipermail/centos-devel/2016-July/014981.html
+	#  and man sshd for more information)
+	OPTIONS="-u0"
 EOF
 
 # Default insecure vagrant key
