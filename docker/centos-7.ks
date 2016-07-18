@@ -107,6 +107,8 @@ rm -rf /etc/sysconfig/network-scripts/ifcfg-*
 # Fix /run/lock breakage since it's not tmpfs in docker
 umount /run
 systemd-tmpfiles --create --boot
+# Make sure login works
+rm /var/run/nologin
 
 
 #Generate installtime file record

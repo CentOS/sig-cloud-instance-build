@@ -63,8 +63,8 @@ yum -y remove dhclient dhcp-libs dracut grubby kmod grub2 centos-logos \
 
 yum -y remove  firewalld dbus-glib dbus-python ebtables \
   gobject-introspection libselinux-python pygobject3-base \
-  python-decorator python-slip python-slip-dbus kpartx linux-firmware \
-  device-mapper* e2fsprogs-libs sysvinit-tools
+  python-decorator python-slip python-slip-dbus kpartx kernel-firmware \
+  device-mapper* e2fsprogs-libs sysvinit-tools kbd-misc
 
 #clean up unused directories
 rm -rf /boot
