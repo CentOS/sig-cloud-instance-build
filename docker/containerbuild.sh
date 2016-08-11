@@ -55,3 +55,9 @@ LABEL name="CentOS Base Image" \\
 
 CMD ["/bin/bash"]
 EOF
+
+# Create cccp.yaml for testing
+cat << EOF > $BUILDROOT/docker/cccp.yaml
+job-id: centos-base
+test-skip: true
+EOF

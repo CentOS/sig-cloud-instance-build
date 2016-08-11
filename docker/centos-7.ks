@@ -22,7 +22,7 @@ reboot
 bootloader --disable
 lang en_US
 
-# Repositories to use 
+# Repositories to use
 repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/7/os/x86_64/ --cost=100
 ## Uncomment for rolling builds
 repo --name="Updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64/ --cost=100
