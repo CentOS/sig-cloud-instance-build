@@ -39,6 +39,9 @@ build_vagrant_image()
 }
 
 
+# Change the current directory to where this script is placed (issue #60)
+cd $(dirname $(realpath $0))
+
 if [ $# -ne 1 ]; then
   usage
 fi
