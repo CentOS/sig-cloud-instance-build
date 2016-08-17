@@ -1,4 +1,5 @@
 #!/bin/sh
+# TODO the script only works when called from the vagrant directory
 #To see all options in koji -p command check "koji -p cbs image-build --help"
 set -eu
 
