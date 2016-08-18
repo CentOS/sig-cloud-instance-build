@@ -34,7 +34,6 @@ build_vagrant_image()
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/extras/x86_64/\
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/updates/x86_64/\
     --scratch \
-    --nowait \
     --disk-size=40
 }
 
