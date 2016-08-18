@@ -17,6 +17,8 @@ EOF
 
 build_vagrant_image()
 {
+  # The kickstart files are in the same directory as this script
+  KS_DIR=$(dirname $0)
   EL_MAJOR=$1
   koji -p cbs image-build \
     centos-${EL_MAJOR} 1  bananas${EL_MAJOR}-el${EL_MAJOR} \
@@ -24,7 +26,7 @@ build_vagrant_image()
     --release=1 \
     --distro RHEL-${EL_MAJOR}.0 \
     --ksver RHEL${EL_MAJOR} \
-    --kickstart=./centos${EL_MAJOR}.ks \
+    --kickstart=${KS_DIR}/centos${EL_MAJOR}.ks \
     --format=qcow2 \
     --format=vsphere-ova \
     --format=rhevm-ova \
