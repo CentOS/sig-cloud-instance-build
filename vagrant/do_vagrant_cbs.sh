@@ -1,5 +1,5 @@
 #!/bin/sh
-#To see all options in koji -p command check "koji -p cbs image-build --help"
+# To see all options in koji -p command check "koji -p cbs image-build --help"
 set -eu
 
 usage()
@@ -19,6 +19,10 @@ build_vagrant_image()
 {
   # The kickstart files are in the same directory as this script
   KS_DIR=$(dirname $0)
+
+  # Always wait if stdout is not a tty (needed by ci.centos.org)
+  if [ ! -t 1 ]; then WAIT="--wait"; fi
+
   EL_MAJOR=$1
   koji -p cbs image-build \
     centos-${EL_MAJOR} 1  bananas${EL_MAJOR}-el${EL_MAJOR} \
@@ -36,7 +40,7 @@ build_vagrant_image()
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/extras/x86_64/\
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/updates/x86_64/\
     --scratch \
-    --nowait \
+    ${WAIT:-"--nowait"} \
     --disk-size=40
 }
 
@@ -61,3 +65,4 @@ case $1 in
     ;;
 esac
 
+# vim: set sw=2:
