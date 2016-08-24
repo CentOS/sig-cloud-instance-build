@@ -8,4 +8,4 @@ following snippet to your `Vagrantfile`:
 config.vm.synced_folder ".", "/vagrant", disabled: true
 ~~~
 
-*This might be also needed on Windows, when rsync is not installed*.
+*This might be also needed on Windows, since rsync is not installed by default*.
