@@ -87,4 +87,13 @@ echo 'vag' > /etc/yum/vars/infra
 # Configure grub to wait just 1 second before booting
 sed -i 's/^GRUB_TIMEOUT=[0-9]\+$/GRUB_TIMEOUT=1/' /etc/default/grub && grub2-mkconfig -o /boot/grub2/grub.cfg
 
+# Enable VMware PVSCSI support for VMware Fusion guests. This produces
+# a tiny increase in the image and is harmless for other environments.
+pushd /etc/dracut.conf.d
+echo 'add_drivers+="mptspi"' > vmware-fusion-drivers.conf
+popd
+# Rerun dracut for the installed kernel (not the running kernel):
+KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
+dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
+
 %end
