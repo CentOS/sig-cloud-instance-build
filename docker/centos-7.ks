@@ -29,7 +29,7 @@ repo --name="Updates" --baseurl=http://mirror.centos.org/centos/7/updates/x86_64
 
 # Disk setup
 zerombr
-clearpart --all --init-label
+clearpart --all --initlabel
 part / --size 3000 --fstype ext4
 
 # Package setup
