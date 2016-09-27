@@ -38,7 +38,8 @@ for Element in "${PACKAGES[@]}"
 done
 
 # Test for active libvirtd
-if [ ! `systemctl is-active libvirtd` ne "is-active" ]
+TEST=`systemctl is-active libvirtd`
+if [ "$?" -gt 0 ]
 then echo "libvirtd must be running"
 exit 1
 fi
