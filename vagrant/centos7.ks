@@ -19,11 +19,11 @@ clearpart --all --drives=vda
 user --name=vagrant --password=vagrant
 
 part biosboot --fstype=biosboot --size=1
-part /boot --fstype ext4 --size=500 --ondisk=vda
+part /boot --fstype xfs --size=500 --ondisk=vda
 part pv.2 --size=1 --grow --ondisk=vda
 volgroup VolGroup00 --pesize=32768 pv.2
 logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=768 --grow --maxsize=1536
-logvol / --fstype ext4 --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
+logvol / --fstype xfs --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
 reboot
 
 %packages
