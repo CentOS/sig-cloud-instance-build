@@ -90,7 +90,7 @@ sed -i 's/^timeout=[0-9]\+$/timeout=1/' /boot/grub/grub.conf
 # Enable VMware PVSCSI support for VMware Fusion guests. This produces
 # a tiny increase in the image and is harmless for other environments.
 pushd /etc/dracut.conf.d
-echo 'add_drivers+="mptspi"' > vmware-fusion-drivers.conf
+echo 'add_drivers+=" mptspi "' > vmware-fusion-drivers.conf
 popd
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
