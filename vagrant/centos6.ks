@@ -78,6 +78,19 @@ chown -R vagrant:vagrant /home/vagrant/.ssh
 # wrong SELinux context (see "Known Issues" in the CentOS 6 release notes)
 restorecon -vR /home/vagrant/.ssh
 
+# Fix for issue #76, regular users can gain admin privileges via su
+ex -s /etc/pam.d/su <<'EOF'
+/^account\s\+sufficient\s\+pam_succeed_if.so uid = 0 use_uid quiet$/
+:append
+# allow vagrant to use su, but prevent others from becoming root or vagrant
+account		[success=1 default=ignore] \\
+				pam_succeed_if.so user = vagrant use_uid quiet
+account		required	pam_succeed_if.so user notin root:vagrant
+.
+:update
+:quit
+EOF
+
 # Indicate that vagrant6 infra is being used
 echo 'vag' > /etc/yum/vars/infra
 

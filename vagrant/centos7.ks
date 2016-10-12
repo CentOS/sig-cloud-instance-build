@@ -76,6 +76,19 @@ echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4
 chmod 600 /home/vagrant/.ssh/authorized_keys
 chown -R vagrant:vagrant /home/vagrant/.ssh
 
+# Fix for issue #76, regular users can gain admin privileges via su
+ex -s /etc/pam.d/su <<'EOF'
+# allow vagrant to use su, but prevent others from becoming root or vagrant
+/^account\s\+sufficient\s\+pam_succeed_if.so uid = 0 use_uid quiet$/
+:append
+account		[success=1 default=ignore] \\
+				pam_succeed_if.so user = vagrant use_uid quiet
+account		required	pam_succeed_if.so user notin root:vagrant
+.
+:update
+:quit
+EOF
+
 # systemd should generate a new machine id during the first boot, to
 # avoid having multiple Vagrant instances with the same id in the local
 # network. /etc/machine-id should be empty, but it must exist to prevent
