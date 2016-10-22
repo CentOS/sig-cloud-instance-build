@@ -61,6 +61,8 @@ yum-utils
 -iwl6050-firmware
 -iwl7260-firmware
 -iwl7265-firmware
+# Don't build rescue initramfs
+-dracut-config-rescue
 
 %end
 
