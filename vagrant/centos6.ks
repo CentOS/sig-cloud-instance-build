@@ -120,6 +120,10 @@ sed -i 's/^timeout=[0-9]\+$/timeout=1/' /boot/grub/grub.conf
 pushd /etc/dracut.conf.d
 echo 'add_drivers+=" mptspi "' > vmware-fusion-drivers.conf
 popd
+# Fix the SELinux context of the new files
+restorecon -f - <<EOF
+/etc/dracut.conf.d/vmware-fusion-drivers.conf
+EOF
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
