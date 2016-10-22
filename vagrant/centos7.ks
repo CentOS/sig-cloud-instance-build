@@ -87,11 +87,23 @@ echo 'vag' > /etc/yum/vars/infra
 # Configure grub to wait just 1 second before booting
 sed -i 's/^GRUB_TIMEOUT=[0-9]\+$/GRUB_TIMEOUT=1/' /etc/default/grub && grub2-mkconfig -o /boot/grub2/grub.cfg
 
-# Enable VMware PVSCSI support for VMware Fusion guests. This produces
-# a tiny increase in the image and is harmless for other environments.
+# Blacklist the floppy module to avoid probing timeouts
+echo blacklist floppy > /etc/modprobe.d/nofloppy.conf
+chcon -u system_u -r object_r -t modules_conf_t /etc/modprobe.d/nofloppy.conf
+
+# Customize the initramfs
 pushd /etc/dracut.conf.d
+# Enable VMware PVSCSI support for VMware Fusion guests.
 echo 'add_drivers+=" mptspi "' > vmware-fusion-drivers.conf
+# There's no floppy controller, but probing for it generates timeouts
+echo 'omit_drivers+=" floppy "' > nofloppy.conf
 popd
+# Fix the SELinux context of the new files
+restorecon -f - <<EOF
+/etc/dracut.conf.d/vmware-fusion-drivers.conf
+/etc/dracut.conf.d/nofloppy.conf
+EOF
+
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
