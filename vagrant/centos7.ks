@@ -66,6 +66,11 @@ yum-utils
 
 %end
 
+# kdump needs to reserve 160MB + 2bits/4kB RAM, and automatic allocation only
+# works on systems with at least 2GB RAM (which excludes most Vagrant boxes)
+%addon com_redhat_kdump --disable
+%end
+
 %post
 
 # sudo
