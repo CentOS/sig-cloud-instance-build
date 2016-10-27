@@ -135,6 +135,7 @@ echo 'add_drivers+=" mptspi "' > vmware-fusion-drivers.conf
 popd
 # Fix the SELinux context of the new files
 restorecon -f - <<EOF
+/etc/sudoers.d/vagrant
 /etc/dracut.conf.d/vmware-fusion-drivers.conf
 EOF
 # Rerun dracut for the installed kernel (not the running kernel):
