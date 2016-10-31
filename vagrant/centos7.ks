@@ -68,8 +68,9 @@ yum-utils
 
 # kdump needs to reserve 160MB + 2bits/4kB RAM, and automatic allocation only
 # works on systems with at least 2GB RAM (which excludes most Vagrant boxes)
-%addon com_redhat_kdump --disable
-%end
+# CBS doesn't support %addon yet https://bugs.centos.org/view.php?id=12169
+#%addon com_redhat_kdump --disable
+#%end
 
 %post
 
