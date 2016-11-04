@@ -145,6 +145,7 @@ echo 'omit_drivers+=" floppy "' > nofloppy.conf
 popd
 # Fix the SELinux context of the new files
 restorecon -f - <<EOF
+/etc/sudoers.d/vagrant
 /etc/dracut.conf.d/vmware-fusion-drivers.conf
 /etc/dracut.conf.d/nofloppy.conf
 EOF
