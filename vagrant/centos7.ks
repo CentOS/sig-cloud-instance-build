@@ -76,7 +76,7 @@ yum-utils
 
 # sudo
 echo "%vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
-sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
+sed -i 's%^Defaults\s\+requiretty$%# This breaks Vagrant, see https://github.com/mitchellh/vagrant/issues/1482\n# &%' /etc/sudoers
 
 # Fix for https://github.com/CentOS/sig-cloud-instance-build/issues/38
 cat > /etc/sysconfig/network-scripts/ifcfg-eth0 << EOF
