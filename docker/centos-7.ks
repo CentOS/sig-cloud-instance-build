@@ -81,8 +81,7 @@ yum clean all
 rm -rf /boot
 rm -rf /etc/firewalld
 
-# Randomize root's password and lock
-dd if=/dev/urandom count=50 | md5sum | passwd --stdin root
+# Lock roots account, keep roots account password-less.
 passwd -l root
 
 #LANG="en_US"
