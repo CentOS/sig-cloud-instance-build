@@ -25,7 +25,7 @@ build_vagrant_image()
 
   EL_MAJOR=$1
   koji -p cbs image-build \
-    centos-${EL_MAJOR} 1  bananas${EL_MAJOR}-el${EL_MAJOR} \
+    centos-${EL_MAJOR} 1  cloudinstance${EL_MAJOR}-common-el${EL_MAJOR} \
     http://mirror.centos.org/centos/${EL_MAJOR}/os/x86_64/ x86_64 \
     --release=1 \
     --distro RHEL-${EL_MAJOR}.0 \
