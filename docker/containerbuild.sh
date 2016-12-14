@@ -30,7 +30,7 @@ fi
 PACKAGES=( lorax libvirt virt-install qemu-kvm )
 for Element in "${PACKAGES[@]}"
   do
-    TEST=`rpm -q $Element`
+    TEST=`rpm -q --whatprovides $Element`
     if [ "$?" -gt 0 ]
     then echo "RPM $Element missing"
     exit 1
