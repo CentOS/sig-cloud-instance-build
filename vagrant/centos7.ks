@@ -76,7 +76,6 @@ yum-utils
 
 # sudo
 echo "%vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
-sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
 
 # Fix for https://github.com/CentOS/sig-cloud-instance-build/issues/38
 cat > /etc/sysconfig/network-scripts/ifcfg-eth0 << EOF
