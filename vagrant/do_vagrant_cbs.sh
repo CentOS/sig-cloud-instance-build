@@ -34,6 +34,7 @@ build_vagrant_image()
     --format=vagrant-libvirt \
     --format=vagrant-virtualbox \
     --format=vagrant-vmware-fusion \
+    --factory-parameter fusion_scsi_controller_type pvscsi \
     --ova-option vagrant_sync_directory=/vagrant \
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/extras/x86_64/\
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/updates/x86_64/\
