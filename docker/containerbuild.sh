@@ -76,7 +76,6 @@ mv /var/tmp/"$KSNAME"-docker.tar.xz $BUILDROOT/docker/
 
 cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
-MAINTAINER https://github.com/CentOS/sig-cloud-instance-images
 ADD $KSNAME-docker.tar.xz /
 
 LABEL name="CentOS Base Image" \\
