@@ -64,6 +64,8 @@ tuned
 -rt73usb-firmware
 -xorg-x11-drv-ati-firmware
 -zd1211-firmware
+# Disable kdump
+-kexec-tools
 
 %end
 
