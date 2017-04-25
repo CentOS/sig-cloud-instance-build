@@ -37,6 +37,7 @@ screen
 nfs-utils
 chrony
 yum-utils
+hyperv-daemons
 # Microcode updates cannot work in a VM
 -microcode_ctl
 # Firmware packages are not needed in a VM
@@ -139,6 +140,7 @@ chcon -u system_u -r object_r -t modules_conf_t /etc/modprobe.d/nofloppy.conf
 pushd /etc/dracut.conf.d
 # Enable VMware PVSCSI support for VMware Fusion guests.
 echo 'add_drivers+=" vmw_pvscsi "' > vmware-fusion-drivers.conf
+echo 'add_drivers+=" hv_netvsc hv_storvsc hv_utils hv_vmbus hid-hyperv "' > hyperv-drivers.conf
 # There's no floppy controller, but probing for it generates timeouts
 echo 'omit_drivers+=" floppy "' > nofloppy.conf
 popd
@@ -146,6 +148,7 @@ popd
 restorecon -f - <<EOF
 /etc/sudoers.d/vagrant
 /etc/dracut.conf.d/vmware-fusion-drivers.conf
+/etc/dracut.conf.d/hyperv-drivers.conf
 /etc/dracut.conf.d/nofloppy.conf
 EOF
 

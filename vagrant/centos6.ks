@@ -36,6 +36,7 @@ rsync
 screen
 nfs-utils
 tuned
+hyperv-daemons
 # Microcode updates cannot work in a VM
 -microcode_ctl
 # Firmware packages are not needed in a VM
@@ -131,11 +132,13 @@ sed -i 's/^timeout=[0-9]\+$/timeout=1/' /boot/grub/grub.conf
 # a tiny increase in the image and is harmless for other environments.
 pushd /etc/dracut.conf.d
 echo 'add_drivers+=" vmw_pvscsi "' > vmware-fusion-drivers.conf
+echo 'add_drivers+=" hv_netvsc hv_storvsc hv_utils hv_vmbus hid-hyperv "' > hyperv-drivers.conf
 popd
 # Fix the SELinux context of the new files
 restorecon -f - <<EOF
 /etc/sudoers.d/vagrant
 /etc/dracut.conf.d/vmware-fusion-drivers.conf
+/etc/dracut.conf.d/hyperv-drivers.conf
 EOF
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
