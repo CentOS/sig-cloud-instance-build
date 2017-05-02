@@ -8,7 +8,7 @@
 # Modified: Carl Thompson
 # Update: Updated to use local boot.iso instead of downloading
 # require preperation but is faster in building the image
-# Requires: lorax libvirt virt-install qemu-kvm
+# Requires: lorax libvirt-daemon libvirt-client virt-install qemu-kvm
 #           systemctl start libvirtd
 #--------------------------------------------------------------------
 #### Basic VAR definitions
@@ -27,7 +27,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Test for package requirements
-PACKAGES=( lorax libvirt virt-install qemu-kvm )
+PACKAGES=( lorax libvirt-daemon libvirt-client virt-install qemu-kvm )
 for Element in "${PACKAGES[@]}"
   do
     TEST=`rpm -q --whatprovides $Element`
