@@ -64,7 +64,8 @@ hyperv-daemons
 -iwl7265-firmware
 # Don't build rescue initramfs
 -dracut-config-rescue
-
+# Disable kdump
+-kexec-tools
 %end
 
 # kdump needs to reserve 160MB + 2bits/4kB RAM, and automatic allocation only
