@@ -12,7 +12,7 @@ selinux --enforcing
 timezone --utc UTC
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
-bootloader --location=mbr --append="no_timer_check console=tty0 console=ttyS0,115200 net.ifnames=0 biosdevname=0"
+bootloader --location=mbr --append="no_timer_check console=tty0 net.ifnames=0 biosdevname=0"
 zerombr
 clearpart --all --drives=vda
 
