@@ -145,4 +145,9 @@ EOF
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
+
+# Seal for deployment
+rm -rf /etc/ssh/ssh_host_*
+sed -i 's/^HOSTNAME=.*$/HOSTNAME=localhost.localdomain/' /etc/sysconfig/network
+rm -rf /etc/udev/rules.d/70-*
 %end
