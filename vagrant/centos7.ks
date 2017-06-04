@@ -37,6 +37,7 @@ screen
 nfs-utils
 chrony
 yum-utils
+hyperv-daemons
 # Microcode updates cannot work in a VM
 -microcode_ctl
 # Firmware packages are not needed in a VM
@@ -154,4 +155,8 @@ EOF
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
 
+# Seal for deployment
+rm -rf /etc/ssh/ssh_host_*
+hostnamectl set-hostname localhost.localdomain
+rm -rf /etc/udev/rules.d/70-*
 %end
