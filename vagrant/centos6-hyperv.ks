@@ -13,7 +13,7 @@ timezone --utc UTC
 services --enabled ntpd,tuned
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
-bootloader --location=mbr --append="no_timer_check console=tty0 console=ttyS0,115200 net.ifnames=0 biosdevname=0"
+bootloader --location=mbr --append="no_timer_check console=ttyS0,115200n8 console=tty0 net.ifnames=0 biosdevname=0"
 zerombr
 clearpart --all --drives=vda
 
@@ -130,15 +130,13 @@ tuned-adm profile virtual-guest
 # Configure grub to wait just 1 second before booting
 sed -i 's/^timeout=[0-9]\+$/timeout=1/' /boot/grub/grub.conf
 
-# Enable VMware PVSCSI support for VMware Fusion guests. This produces
-# a tiny increase in the image and is harmless for other environments.
 pushd /etc/dracut.conf.d
-echo 'add_drivers+=" vmw_pvscsi "' > vmware-fusion-drivers.conf
+echo 'add_drivers+=" hv_netvsc hv_storvsc hv_utils hv_vmbus hid-hyperv "' > hyperv-drivers.conf
 popd
 # Fix the SELinux context of the new files
 restorecon -f - <<EOF
 /etc/sudoers.d/vagrant
-/etc/dracut.conf.d/vmware-fusion-drivers.conf
+/etc/dracut.conf.d/hyperv-drivers.conf
 EOF
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')

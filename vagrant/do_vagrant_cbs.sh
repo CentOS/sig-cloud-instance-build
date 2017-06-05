@@ -34,6 +34,22 @@ build_vagrant_image()
     --format=vagrant-libvirt \
     --format=vagrant-virtualbox \
     --format=vagrant-vmware-fusion \
+    --factory-parameter fusion_scsi_controller_type pvscsi \
+    --ova-option vagrant_sync_directory=/vagrant \
+    --repo http://mirror.centos.org/centos/${EL_MAJOR}/extras/x86_64/\
+    --repo http://mirror.centos.org/centos/${EL_MAJOR}/updates/x86_64/\
+    --scratch \
+    ${WAIT:-"--nowait"} \
+    --disk-size=40
+
+  koji -p cbs image-build \
+    centos-${EL_MAJOR} 1  cloudinstance${EL_MAJOR}-common-el${EL_MAJOR} \
+    http://mirror.centos.org/centos/${EL_MAJOR}/os/x86_64/ x86_64 \
+    --release=1 \
+    --distro RHEL-${EL_MAJOR}.0 \
+    --ksver RHEL${EL_MAJOR} \
+    --kickstart=${KS_DIR}/centos${EL_MAJOR}-hyperv.ks \
+    --format=vagrant-hyperv \
     --ova-option vagrant_sync_directory=/vagrant \
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/extras/x86_64/\
     --repo http://mirror.centos.org/centos/${EL_MAJOR}/updates/x86_64/\

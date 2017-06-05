@@ -37,6 +37,7 @@ screen
 nfs-utils
 chrony
 yum-utils
+hyperv-daemons
 # Microcode updates cannot work in a VM
 -microcode_ctl
 # Firmware packages are not needed in a VM
@@ -63,7 +64,8 @@ yum-utils
 -iwl7265-firmware
 # Don't build rescue initramfs
 -dracut-config-rescue
-
+# Disable kdump
+-kexec-tools
 %end
 
 # kdump needs to reserve 160MB + 2bits/4kB RAM, and automatic allocation only
@@ -138,7 +140,7 @@ chcon -u system_u -r object_r -t modules_conf_t /etc/modprobe.d/nofloppy.conf
 # Customize the initramfs
 pushd /etc/dracut.conf.d
 # Enable VMware PVSCSI support for VMware Fusion guests.
-echo 'add_drivers+=" mptspi "' > vmware-fusion-drivers.conf
+echo 'add_drivers+=" vmw_pvscsi "' > vmware-fusion-drivers.conf
 # There's no floppy controller, but probing for it generates timeouts
 echo 'omit_drivers+=" floppy "' > nofloppy.conf
 popd
@@ -153,4 +155,8 @@ EOF
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
 
+# Seal for deployment
+rm -rf /etc/ssh/ssh_host_*
+hostnamectl set-hostname localhost.localdomain
+rm -rf /etc/udev/rules.d/70-*
 %end
