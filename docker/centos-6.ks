@@ -64,7 +64,7 @@ yum -y remove dhclient dhcp-libs dracut grubby kmod grub2 centos-logos \
 yum -y remove  firewalld dbus-glib dbus-python ebtables \
   gobject-introspection libselinux-python pygobject3-base \
   python-decorator python-slip python-slip-dbus kpartx kernel-firmware \
-  device-mapper* e2fsprogs-libs sysvinit-tools kbd-misc
+  device-mapper* e2fsprogs-libs sysvinit-tools kbd-misc libss upstart
 
 #clean up unused directories
 rm -rf /boot
@@ -86,6 +86,11 @@ rm -f /usr/lib/locale/locale-archive
 
 #Setup locale properly
 localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
+
+#disable services
+for serv in `/sbin/chkconfig|cut -f1`; do /sbin/chkconfig "$serv" off; done;
+mv /etc/rc1.d/S26udev-post /etc/rc1.d/K26udev-post
+
 
 rm -rf /var/cache/yum/*
 rm -f /tmp/ks-script*
