@@ -21,7 +21,7 @@ timezone UTC --isUtc
 # Disk
 bootloader --append="console=tty0" --location=mbr --timeout=1 --boot-drive=vda
 zerombr
-clearpart --all --initlabel 
+clearpart --all --initlabel
 part / --fstype="xfs" --ondisk=vda --size=4096 --grow
 
 %post --erroronfail
@@ -124,6 +124,11 @@ mkdir -p /var/cache/yum
 # reorder console entries
 sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /boot/grub2/grub.cfg
 
+# change cloud-init default settings
+sed -i -e 's/name:\s*fedora/name: centos/' \
+       -e 's/distro:\s*fedora/distro: rhel/' \
+       -e 's/gecos:.*/gecos: Cloud User/' /etc/cloud/cloud.cfg
+
 %end
 
 %packages
@@ -170,4 +175,3 @@ yum-utils
 -plymouth
 
 %end
-
