@@ -15,9 +15,22 @@
 USAGE="USAGE: $(basename "$0") kickstart"
 KICKSTART="$1"
 KSNAME=${KICKSTART%.*}
+KSVER=$(expr "${KSNAME}" : '.*\-\([0-9\.]*\).*')
 BUILDDATE=$(date +%Y%m%d)
 BUILDROOT=/var/tmp/containers/$BUILDDATE/$KSNAME
 CONT_ARCH=$(uname -m)
+
+declare -A BOOTISO_URLS
+BOOTISO_URLS=( \
+    ["5.11x86_64"]="http://mirror.centos.org/centos/5.11/os/x86_64/images/boot.iso" \
+    ["5x86_64"]="http://mirror.centos.org/centos/5/os/x86_64/images/boot.iso" \
+    ["6x86_64"]="http://mirror.centos.org/centos/6/os/x86_64/images/boot.iso" \
+    ["7arm64"]="http://mirror.centos.org/altarch/7/os/aarch64/images/boot.iso" \
+    ["7ppc64le"]="http://mirror.centos.org/altarch/7/os/ppc64le/images/boot.iso" \
+    ["7x86_64"]="http://mirror.centos.org/centos/7/os/x86_64/images/boot.iso" \
+)
+BOOTISO_URL=${BOOTISO_URLS[${KSVER}${CONT_ARCH}]}
+BOOTISO_PATH=/var/tmp/centos-boot-${KSVER}${CONT_ARCH}.iso
 
 #### Test for script requirements
 # Did we get passed a kickstart
@@ -60,13 +73,13 @@ if [ -d "$BUILDROOT" ]; then
 fi
 
 # Fetch the boot.iso for the build.
-if [ ! -e "/tmp/boot-${KSNAME##*-}.iso" ]
+if [ ! -e "$BOOTISO_PATH" ]
   then
-  curl http://mirror.centos.org/centos/"${KSNAME##*-}"/os/x86_64/images/boot.iso -o /tmp/boot-"${KSNAME##*-}".iso
+    curl ${BOOTISO_URL} -o ${BOOTISO_PATH}
 fi
 
 # Build the rootfs
-time livemedia-creator --logfile=/tmp/"$KSNAME"-"$BUILDDATE".log --make-tar --ks "$KICKSTART" --image-name="$KSNAME"-docker.tar.xz  --iso /tmp/boot-"${KSNAME##*-}".iso
+time livemedia-creator --logfile=/tmp/${KSNAME}-${BUILDDATE}.log --make-tar --ks "${KICKSTART}" --image-name=${KSNAME}-docker.tar.xz  --iso ${BOOTISO_PATH}
 
 # Put the rootfs someplace
 mkdir -p $BUILDROOT/docker
