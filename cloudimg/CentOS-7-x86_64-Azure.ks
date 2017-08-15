@@ -203,3 +203,6 @@ NetworkManager
 
 %end
 
+%addon com_redhat_kdump --disable
+%end
+
