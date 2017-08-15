@@ -151,6 +151,10 @@ sed -i 's/^\(ResourceDisk\.SwapSizeMB\)=[0-9]*$/\1=2048/g' /etc/waagent.conf
 /bin/systemctl enable hypervkvpd
 /bin/systemctl enable hypervvssd
 
+# deprovision the image with waagent
+/sbin/waagent -verbose -force -deprovision
+export HISTSIZE=0
+
 %end
 
 %packages
