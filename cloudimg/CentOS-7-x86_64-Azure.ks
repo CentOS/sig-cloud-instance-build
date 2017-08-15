@@ -57,6 +57,7 @@ USERCTL="yes"
 PEERDNS="yes"
 IPV6INIT="no"
 PERSISTENT_DHCLIENT="1"
+NM_CONTROLLED="yes"
 EOF
 
 echo "virtual-guest" > /etc/tuned/active_profile
