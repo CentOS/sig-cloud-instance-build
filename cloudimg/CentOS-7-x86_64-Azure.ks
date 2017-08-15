@@ -22,6 +22,8 @@ timezone UTC --isUtc --ntpservers 0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.
 bootloader --append="console=tty0" --location=mbr --timeout=1 --boot-drive=vda
 zerombr
 clearpart --all --initlabel
+# use a separate /boot partition with recommended 1GiB size and xfs filesystem
+part /boot --fstype="xfs" -ondisk=vda --size=1000
 part / --fstype="xfs" --ondisk=vda --size=4096 --grow
 
 %post --erroronfail
