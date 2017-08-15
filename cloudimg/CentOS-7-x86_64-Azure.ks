@@ -146,6 +146,11 @@ dracut -v -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
 sed -i 's/^\(ResourceDisk\.EnableSwap\)=[Nn]$/\1=y/g' /etc/waagent.conf
 sed -i 's/^\(ResourceDisk\.SwapSizeMB\)=[0-9]*$/\1=2048/g' /etc/waagent.conf
 
+# make sure waagent and Hyper-V daemons are enabled
+/bin/systemctl enable waagent
+/bin/systemctl enable hypervkvpd
+/bin/systemctl enable hypervvssd
+
 %end
 
 %packages
