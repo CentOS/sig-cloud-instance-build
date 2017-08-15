@@ -115,6 +115,8 @@ sed -i 's/^\(GRUB_CMDLINE_LINUX\)=".*"$/\1="console=tty1 console=ttyS0,115200n8 
 # sshd keepalive
 sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
 
+# blacklist the floppy module to avoid probing timeouts
+echo "blacklist floppy" > /etc/modprobe.d/nofloppy.conf
 
 %end
 
