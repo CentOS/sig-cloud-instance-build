@@ -135,6 +135,10 @@ restorecon -f - <<EOF
 /etc/dracut.conf.d/nofloppy.conf
 EOF
 
+# rebuild initramfs for the installed kernel (not the running one)
+KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
+dracut -v -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
+
 %end
 
 %packages
