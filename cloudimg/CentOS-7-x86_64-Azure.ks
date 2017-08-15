@@ -112,6 +112,10 @@ chmod 755 /var/log/azure
 # add console and interface naming options to kernel cmdline
 sed -i 's/^\(GRUB_CMDLINE_LINUX\)=".*"$/\1="console=tty1 console=ttyS0,115200n8 earlyprintk=ttyS0,115200 rootdelay=300 net.ifnames=0"/g' /etc/default/grub
 
+# sshd keepalive
+sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
+
+
 %end
 
 %packages
