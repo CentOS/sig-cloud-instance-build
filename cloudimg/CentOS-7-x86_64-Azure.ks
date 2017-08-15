@@ -109,8 +109,8 @@ mkdir -p /var/log/azure
 chmod 755 /var/log/azure
 /usr/sbin/fixfiles -R -a restore
 
-# reorder console entries
-sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /boot/grub2/grub.cfg
+# add console and interface naming options to kernel cmdline
+sed -i 's/^\(GRUB_CMDLINE_LINUX\)=".*"$/\1="console=tty1 console=ttyS0,115200n8 earlyprintk=ttyS0,115200 rootdelay=300 net.ifnames=0"/g' /etc/default/grub
 
 %end
 
