@@ -21,7 +21,7 @@ timezone UTC --isUtc
 # Disk
 bootloader --append="console=tty0" --location=mbr --timeout=1 --boot-drive=vda
 zerombr
-clearpart --all --initlabel 
+clearpart --all --initlabel
 part / --fstype="xfs" --ondisk=vda --size=4096 --grow
 
 %post --erroronfail
