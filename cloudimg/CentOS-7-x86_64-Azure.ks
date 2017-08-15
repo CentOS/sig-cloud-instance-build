@@ -72,6 +72,9 @@ echo .
 
 systemctl mask tmp.mount
 
+# disable the network service so it won't interfere with NetworkManager
+systemctl mask network
+
 cat <<EOL > /etc/sysconfig/kernel
 # UPDATEDEFAULT specifies if new-kernel-pkg should make
 # new kernels the default
