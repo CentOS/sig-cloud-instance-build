@@ -16,7 +16,7 @@ network  --hostname=localhost.localdomain
 # Root password
 rootpw --iscrypted thereisnopasswordanditslocked
 selinux --enforcing
-services --disabled="kdump" --enabled="network,sshd,rsyslog,chronyd"
+services --disabled="kdump" --enabled="NetworkManager,sshd,rsyslog,chronyd"
 timezone UTC --isUtc
 # Disk
 bootloader --append="console=tty0" --location=mbr --timeout=1 --boot-drive=vda
