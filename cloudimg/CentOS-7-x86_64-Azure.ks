@@ -36,10 +36,6 @@ ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 
 yum -C -y remove linux-firmware
 
-# Remove firewalld; it is required to be present for install/image building.
-# but we dont ship it in cloud
-yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
-yum -C -y remove avahi\* Network\*
 sed -i '/^#NAutoVTs=.*/ a\
 NAutoVTs=0' /etc/systemd/logind.conf
 
