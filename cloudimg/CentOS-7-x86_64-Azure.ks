@@ -139,6 +139,9 @@ EOF
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -v -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
 
+# regenerate grub.cfg to pick up the new console parameters
+/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg
+
 %end
 
 %packages
