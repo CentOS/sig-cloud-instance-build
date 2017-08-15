@@ -128,6 +128,12 @@ cat > /etc/dracut.conf.d/nofloppy.conf << EOF
 omit_drivers+=" floppy "
 EOF
 
+# fix SELinux context of added/changed files
+restorecon -f - <<EOF
+/etc/modprobe.d/nofloppy.conf
+/etc/dracut.conf.d/hyperv-drivers.conf
+/etc/dracut.conf.d/nofloppy.conf
+EOF
 
 %end
 
