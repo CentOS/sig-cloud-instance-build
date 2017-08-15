@@ -17,7 +17,7 @@ network  --hostname=localhost.localdomain
 rootpw --iscrypted thereisnopasswordanditslocked
 selinux --enforcing
 services --disabled="kdump" --enabled="NetworkManager,sshd,rsyslog,chronyd"
-timezone UTC --isUtc
+timezone UTC --isUtc --ntpservers 0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.centos.pool.ntp.org,3.centos.pool.ntp.org
 # Disk
 bootloader --append="console=tty0" --location=mbr --timeout=1 --boot-drive=vda
 zerombr
