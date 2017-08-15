@@ -103,6 +103,10 @@ echo "Fixing SELinux contexts."
 touch /var/log/cron
 touch /var/log/boot.log
 mkdir -p /var/cache/yum
+
+# make sure the azure log dir exists
+mkdir -p /var/log/azure
+chmod 755 /var/log/azure
 /usr/sbin/fixfiles -R -a restore
 
 # reorder console entries
