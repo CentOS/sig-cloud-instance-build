@@ -118,6 +118,12 @@ sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
 # blacklist the floppy module to avoid probing timeouts
 echo "blacklist floppy" > /etc/modprobe.d/nofloppy.conf
 
+# add Hyper-V drivers to initramfs
+cat > /etc/dracut.conf.d/hypervdrivers.conf << EOF
+add_drivers+=" hv_vmbus hv_netvsc hv_storvsc hv_utils hid_hyperv hyperv_fb hyperv_keyboard "
+EOF
+
+
 %end
 
 %packages
