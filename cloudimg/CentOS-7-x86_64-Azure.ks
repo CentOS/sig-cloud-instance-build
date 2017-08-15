@@ -165,12 +165,13 @@ dracut-config-generic
 dracut-norescue
 firewalld
 grub2
+hyperv-daemons
 kernel
 nfs-utils
 rsync
 tar
 yum-utils
--NetworkManager
+NetworkManager
 -aic94xx-firmware
 -alsa-firmware
 -alsa-lib
@@ -194,6 +195,7 @@ yum-utils
 -iwl6000g2b-firmware
 -iwl6050-firmware
 -iwl7260-firmware
+-iwl7265-firmware
 -libertas-sd8686-firmware
 -libertas-sd8787-firmware
 -libertas-usb8388-firmware
