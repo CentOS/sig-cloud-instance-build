@@ -142,6 +142,10 @@ dracut -v -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
 # regenerate grub.cfg to pick up the new console parameters
 /sbin/grub2-mkconfig -o /boot/grub2/grub.cfg
 
+# set up swap in WALinuxAgent config
+sed -i 's/^\(ResourceDisk\.EnableSwap\)=[Nn]$/\1=y/g' /etc/waagent.conf
+sed -i 's/^\(ResourceDisk\.SwapSizeMB\)=[0-9]*$/\1=2048/g' /etc/waagent.conf
+
 %end
 
 %packages
