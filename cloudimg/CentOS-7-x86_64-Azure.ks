@@ -123,6 +123,11 @@ cat > /etc/dracut.conf.d/hypervdrivers.conf << EOF
 add_drivers+=" hv_vmbus hv_netvsc hv_storvsc hv_utils hid_hyperv hyperv_fb hyperv_keyboard "
 EOF
 
+# omit floppy module in initramfs
+cat > /etc/dracut.conf.d/nofloppy.conf << EOF
+omit_drivers+=" floppy "
+EOF
+
 
 %end
 
