@@ -1,123 +1,130 @@
+# This is a minimal CentOS kickstart designed for docker.
+# It will not produce a bootable system
+# To use this kickstart, run the following command
+# livemedia-creator --make-tar \
+#   --iso=/path/to/boot.iso  \
+#   --ks=centos-7.ks \
+#   --image-name=centos-root.tar.xz
+#
+# Once the image has been generated, it can be imported into docker
+# by using: cat centos-root.tar.xz | docker import -i imagename
+
+# Basic setup information
+url --url="http://mirror.centos.org/altarch/7/os/aarch64/"
 install
-keyboard us
-network  --bootproto=dhcp --device=eth0 --onboot=on
-rootpw --iscrypted $1$UKLtvLuY$kka6S665oCFmU7ivSDZzU.
-timezone UTC --isUtc 
+keyboard us --xlayouts=us --vckeymap=us
+rootpw --lock --iscrypted locked
+timezone --isUtc --nontp UTC
 selinux --enforcing
 firewall --disabled
-repo --name="CentOS" --baseurl=http://mirror.centos.org/altarch/7/os/aarch64/
-repo --name="Updates" --baseurl=http://mirror.centos.org/altarch/7/updates/aarch64/
-repo --name="systemdcontainer" --baseurl=http://dev.centos.org/altarch/7/systemd-container/ --cost=100
+network --bootproto=dhcp --device=link --activate --onboot=on
+shutdown
+bootloader --location=mbr
+lang en_US.UTF-8
 
+# Repositories to use
+repo --name="instCentOS" --baseurl=http://mirror.centos.org/altarch/7/os/aarch64/ --cost=100
+## Uncomment for rolling builds
+repo --name="instUpdates" --baseurl=http://mirror.centos.org/altarch/7/updates/aarch64/ --cost=100
 
-clearpart --all --initlabel
-part / --fstype ext4 --size=1024 --grow
-reboot
+# Disk setup
+clearpart --initlabel --all
+part /boot/efi --size=100
+part /boot     --size=400  --label=boot
+part swap      --size=2000 --label=swap --asprimary
+part /         --size=8192 --label=rootfs
 
-%packages  --excludedocs --nobase
+# Package setup
+%packages --excludedocs --instLangs=en --nocore
 bind-utils
 bash
 yum
 vim-minimal
 centos-release
-shadow-utils
 less
 -kernel*
 -*firmware
-grub2-efi
 -os-prober
 -gettext*
 -bind-license
 -freetype
 iputils
 iproute
--systemd
-systemd-container
+systemd
 rootfiles
+-libteam
+-teamd
+tar
 passwd
+yum-utils
+yum-plugin-ovl
+-GeoIP
+-firewalld-filesystem
+-libss
+-qemu-guest-agent
+
 
 %end
 
-%post
-# randomize root password and lock root account
-dd if=/dev/urandom count=50 | md5sum | passwd --stdin root
-passwd -l root
+%post --log=/anaconda-post.log
+# Post configure tasks for Docker
 
-# create necessary devices
-/sbin/MAKEDEV /dev/console
+# remove stuff we don't need that anaconda insists on
+# kernel needs to be removed by rpm, because of grubby
+rpm -e kernel
 
-# cleanup unwanted stuff
+yum -y remove bind-libs bind-libs-lite dhclient dhcp-common dhcp-libs \
+  dracut-network e2fsprogs e2fsprogs-libs ebtables ethtool file \
+  firewalld freetype gettext gettext-libs groff-base grub2-efi grub2-tools \
+  grubby initscripts iproute iptables kexec-tools libcroco libgomp \
+  libmnl libnetfilter_conntrack libnfnetlink libselinux-python lzo \
+  libunistring os-prober python-decorator python-slip python-slip-dbus \
+  snappy sysvinit-tools which linux-firmware centos-logos shim \
+  mokutil pciutils-libs xfsprogs dosfstools efibootmgr efivar-libs \
+  GeoIP firewalld-filesystem
+yum clean all
 
-# some packages get installed even though we ask for them not to be,
-# and they don't have any external dependencies that should make
-# anaconda install them
-
-
-yum -y remove  grub2 centos-logos hwdata os-prober gettext* \
-  bind-license freetype kmod dracut
-
-
-# firewalld is necessary for building on centos7 but it is not
-# necessary in the image. remove it and its requirements.
-
-yum -y remove  firewalld dbus-glib dbus-python ebtables \
-  gobject-introspection libselinux-python pygobject3-base \
-  python-decorator python-slip python-slip-dbus
+#clean up unused directories
+rm -rf /boot
 rm -rf /etc/firewalld
 
+# Lock roots account, keep roots account password-less.
+passwd -l root
 
-rm -rf /boot
+#LANG="en_US"
+#echo "%_install_lang $LANG" > /etc/rpm/macros.image-language-conf
 
-#delete a few systemd things
-rm -rf /etc/machine-id
-rm -rf /usr/lib/systemd/system/multi-user.target.wants/getty.target
-rm -rf /usr/lib/systemd/system/multi-user.target.wants/systemd-logind.service
+awk '(NF==0&&!done){print "override_install_langs='$LANG'\ntsflags=nodocs";done=1}{print}' \
+    < /etc/yum.conf > /etc/yum.conf.new
+mv /etc/yum.conf.new /etc/yum.conf
+echo 'container' > /etc/yum/vars/infra
 
-# Add tsflags to keep yum from installing docs
 
-sed -i '/distroverpkg=centos-release/a tsflags=nodocs' /etc/yum.conf
 
-# Remove files that are known to take up lots of space but leave
-# directories intact since those may be required by new rpms.
+#Setup locale properly
+#localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
 
-# locales
-# nuking the locales breaks things. Lets not do that anymore
-# strip most of the languages from the archive.
-localedef --delete-from-archive $(localedef --list-archive | \
-grep -v -i ^en | xargs )
-# prep the archive template
-mv /usr/lib/locale/locale-archive  /usr/lib/locale/locale-archive.tmpl
-# rebuild archive
-/usr/sbin/build-locale-archive
-#empty the template
-:>/usr/lib/locale/locale-archive.tmpl
+rm -rf /var/cache/yum/aarch64
+rm -f /tmp/ks-script*
+rm -rf /var/log/anaconda*
+rm -rf /tmp/ks-script*
+rm -rf /etc/sysconfig/network-scripts/ifcfg-*
+# do we really need a hardware database in a container?
+rm -rf /etc/udev/hwdb.bin
+rm -rf /usr/lib/udev/hwdb.d/*
+
+
+## Systemd fixes
+# no machine-id by default.
+:> /etc/machine-id
+# Fix /run/lock breakage since it's not tmpfs in docker
+umount /run
+systemd-tmpfiles --create --boot
+# Make sure login works
+m /var/run/nologin
 
 
 #Generate installtime file record
 /bin/date +%Y%m%d_%H%M > /etc/BUILDTIME
-
-
-
-#  man pages and documentation
-#find /usr/share/{man,doc} \
-#        -type f | xargs /bin/rm
-
-#  cracklib
-#find /usr/share/cracklib \
-#        -type f | xargs /bin/rm
-
-#  sln
-rm -f /sbin/sln
-
-#  ldconfig
-rm -rf /etc/ld.so.cache
-rm -rf /var/cache/ldconfig/*
-rm -rf /var/cache/yum/* 
-
-# Clean up after the installer.
-rm -f /etc/rpm/macros.imgcreate
-
-# temp fix for systemd /run/lock
-
 
 %end
