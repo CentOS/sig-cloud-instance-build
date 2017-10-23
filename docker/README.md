@@ -10,9 +10,8 @@ This method does NOT work for CentOS-5 base containers.
 
 The following packages and dependencies are needed:
 
- * libguestfs-tools-c
  * lorax
- * virt-install
+ * anaconda-tui
 
 
 ## Build
