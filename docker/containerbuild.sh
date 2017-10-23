@@ -26,7 +26,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Test for package requirements
-PACKAGES=( anaconda lorax )
+PACKAGES=( anaconda-tui lorax )
 for Element in "${PACKAGES[@]}"
   do
     TEST=`rpm -q --whatprovides $Element`
