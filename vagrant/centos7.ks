@@ -26,7 +26,7 @@ logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=768 --grow 
 logvol / --fstype xfs --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
 reboot
 
-%packages
+%packages --excludedocs --instLangs=en
 deltarpm
 bash-completion
 man-pages
