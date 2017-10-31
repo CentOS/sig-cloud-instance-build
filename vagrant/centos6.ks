@@ -27,7 +27,7 @@ logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=768 --grow 
 logvol / --fstype ext4 --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
 reboot
 
-%packages
+%packages --excludedocs --instLangs=en
 deltarpm
 man-pages
 bzip2
