@@ -13,7 +13,7 @@ timezone --utc UTC
 services --enabled ntpd,tuned
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
-bootloader --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0"
+bootloader --timeout=1 --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0"
 zerombr
 clearpart --all --drives=vda
 part / --fstype=ext4 --asprimary --size=1024 --grow --ondisk=vda
@@ -121,9 +121,6 @@ echo 'vag' > /etc/yum/vars/infra
 
 # Configure tuned
 tuned-adm profile virtual-guest
-
-# Configure grub to wait just 1 second before booting
-sed -i 's/^timeout=[0-9]\+$/timeout=1/' /boot/grub/grub.conf
 
 # Enable VMware PVSCSI support for VMware Fusion guests. This produces
 # a tiny increase in the image and is harmless for other environments.

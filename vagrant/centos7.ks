@@ -12,7 +12,7 @@ selinux --enforcing
 timezone --utc UTC
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
-bootloader --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0"
+bootloader --timeout=1 --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0"
 zerombr
 clearpart --all --drives=vda
 part / --fstype=xfs --asprimary --size=1024 --grow --ondisk=vda
@@ -124,9 +124,6 @@ EOF
 :>/etc/machine-id
 
 echo 'vag' > /etc/yum/vars/infra
-
-# Configure grub to wait just 1 second before booting
-sed -i 's/^GRUB_TIMEOUT=[0-9]\+$/GRUB_TIMEOUT=1/' /etc/default/grub && grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # Blacklist the floppy module to avoid probing timeouts
 echo blacklist floppy > /etc/modprobe.d/nofloppy.conf
