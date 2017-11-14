@@ -13,18 +13,13 @@ timezone --utc UTC
 services --enabled ntpd,tuned
 # The biosdevname and ifnames options ensure we get "eth0" as our interface
 # even in environments like virtualbox that emulate a real NW card
-bootloader --location=mbr --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0"
+bootloader --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0"
 zerombr
 clearpart --all --drives=vda
+part / --fstype=ext4 --asprimary --size=1024 --grow --ondisk=vda
 
 user --name=vagrant --password=vagrant
 
-part biosboot --fstype=biosboot --size=1
-part /boot --fstype ext4 --size=250 --ondisk=vda
-part pv.2 --size=1 --grow --ondisk=vda
-volgroup VolGroup00 --pesize=32768 pv.2
-logvol swap --fstype swap --name=LogVol01 --vgname=VolGroup00 --size=768 --grow --maxsize=1536
-logvol / --fstype ext4 --name=LogVol00 --vgname=VolGroup00 --size=1024 --grow
 reboot
 
 %packages
