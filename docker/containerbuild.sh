@@ -26,7 +26,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Test for package requirements
-PACKAGES=( anaconda-tui lorax )
+PACKAGES=( anaconda-tui lorax yum-langpacks)
 for Element in "${PACKAGES[@]}"
   do
     TEST=`rpm -q --whatprovides $Element`
