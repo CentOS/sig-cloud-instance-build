@@ -19,20 +19,19 @@ selinux --enforcing
 firewall --disabled
 network --bootproto=dhcp --device=link --activate --onboot=on
 shutdown
-bootloader --location=mbr
+bootloader --disable
 lang en_US.UTF-8
 
 # Repositories to use
-repo --name="instCentOS" --baseurl=http://mirror.centos.org/altarch/7/os/armhfp/ --cost=100
+repo --name="CentOS" --baseurl=http://mirror.centos.org/altarch/7/os/armhfp/ --cost=100
 ## Uncomment for rolling builds
-repo --name="instUpdates" --baseurl=http://mirror.centos.org/altarch/7/updates/armhfp/ --cost=100
+repo --name="Updates" --baseurl=http://mirror.centos.org/altarch/7/updates/armhfp/ --cost=100
 
 
 # Disk setup
+zerombr
 clearpart --initlabel --all
-part /boot     --size=400  --label=boot
-part swap      --size=2000 --label=swap --asprimary
-part /         --size=8192 --label=rootfs
+part /         --size=3000 --label=rootfs
 
 # Package setup
 %packages --excludedocs --instLangs=en --nocore
@@ -98,7 +97,7 @@ awk '(NF==0&&!done){print "override_install_langs='$LANG'\ntsflags=nodocs";done=
     < /etc/yum.conf > /etc/yum.conf.new
 mv /etc/yum.conf.new /etc/yum.conf
 echo 'container' > /etc/yum/vars/infra
-
+echo 'generic' > /etc/yum/vars/kvariant
 
 
 #Setup locale properly
@@ -121,7 +120,7 @@ rm -rf /usr/lib/udev/hwdb.d/*
 umount /run
 systemd-tmpfiles --create --boot
 # Make sure login works
-m /var/run/nologin
+rm /var/run/nologin
 
 
 #Generate installtime file record
