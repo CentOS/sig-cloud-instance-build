@@ -24,15 +24,16 @@ reboot
 %packages --excludedocs --instLangs=en
 deltarpm
 bash-completion
-man-pages
 bzip2
-@core
 rsync
-screen
 nfs-utils
 chrony
 yum-utils
 hyperv-daemons
+-e2fsprogs
+-btrfs-progs
+# Vagrant boxes aren't normally visible, no need for Plymouth
+-plymouth
 # Microcode updates cannot work in a VM
 -microcode_ctl
 # Firmware packages are not needed in a VM
@@ -57,6 +58,7 @@ hyperv-daemons
 -iwl6050-firmware
 -iwl7260-firmware
 -iwl7265-firmware
+-linux-firmware
 # Don't build rescue initramfs
 -dracut-config-rescue
 # Disable kdump
