@@ -21,9 +21,10 @@ user --name=vagrant --password=vagrant
 
 reboot
 
-%packages --excludedocs --instLangs=en
+%packages --instLangs=en
 deltarpm
 bash-completion
+man-pages
 bzip2
 rsync
 nfs-utils
