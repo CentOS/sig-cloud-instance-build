@@ -121,7 +121,7 @@ rm -rf /usr/lib/udev/hwdb.d/*
 umount /run
 systemd-tmpfiles --create --boot
 # Make sure login works
-m /var/run/nologin
+rm /var/run/nologin
 
 
 #Generate installtime file record
