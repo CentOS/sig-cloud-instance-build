@@ -67,6 +67,12 @@ hyperv-daemons
 
 %post
 
+# configure swap to a file
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+echo "/swapfile none swap defaults 0 0" >> /etc/fstab
+
 # sudo
 echo "%vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
 
