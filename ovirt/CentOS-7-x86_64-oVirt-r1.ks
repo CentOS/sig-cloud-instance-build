@@ -110,7 +110,7 @@ echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 yum clean all
 
 # XXX instance type markers - MUST match CentOS Infra expectation
-echo 'genclo' > /etc/yum/vars/infra
+echo 'ovirt' > /etc/yum/vars/infra
 
 # chance dhcp client retry/timeouts to resolve #6866
 cat  >> /etc/dhcp/dhclient.conf << EOF
