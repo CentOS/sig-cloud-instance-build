@@ -61,6 +61,14 @@ yum-plugin-ovl
 
 %end
 
+%pre
+# Pre configure tasks for Docker
+
+# Don't add the anaconda build logs to the image
+# see /usr/share/anaconda/post-scripts/99-copy-logs.ks
+touch /tmp/NOSAVE_LOGS
+%end
+
 %post --log=/anaconda-post.log
 # Post configure tasks for Docker
 
@@ -103,8 +111,6 @@ echo 'container' > /etc/yum/vars/infra
 ## Remove some things we don't need
 rm -rf /var/cache/yum/x86_64
 rm -f /tmp/ks-script*
-rm -rf /var/log/anaconda
-rm -rf /tmp/ks-script*
 rm -rf /etc/sysconfig/network-scripts/ifcfg-*
 # do we really need a hardware database in a container?
 rm -rf /etc/udev/hwdb.bin
