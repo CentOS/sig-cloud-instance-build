@@ -74,6 +74,13 @@ hyperv-daemons
 
 %post
 
+# configure swap to a file - we can't use fallocate on XFS though
+# (see https://bugzilla.redhat.com/show_bug.cgi?id=1129205#c3)
+dd if=/dev/zero of=/swapfile bs=1M count=2048
+chmod 600 /swapfile
+mkswap /swapfile
+echo "/swapfile none swap defaults 0 0" >> /etc/fstab
+
 # sudo
 echo "%vagrant ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/vagrant
 
