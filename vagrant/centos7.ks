@@ -28,6 +28,7 @@ man-pages
 bzip2
 rsync
 nfs-utils
+cifs-utils
 chrony
 yum-utils
 hyperv-daemons

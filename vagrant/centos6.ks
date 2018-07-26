@@ -30,6 +30,7 @@ bzip2
 rsync
 screen
 nfs-utils
+cifs-utils
 tuned
 hyperv-daemons
 # Microcode updates cannot work in a VM
