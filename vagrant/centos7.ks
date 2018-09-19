@@ -15,7 +15,7 @@ timezone --utc UTC
 bootloader --timeout=1 --append="no_timer_check console=tty0 console=ttyS0,115200n8 net.ifnames=0 biosdevname=0 elevator=noop"
 zerombr
 clearpart --all --drives=vda
-part / --fstype=xfs --asprimary --size=1024 --grow --ondisk=vda
+part / --fstype=ext4 --asprimary --size=1024 --grow --ondisk=vda
 
 user --name=vagrant --password=vagrant
 
@@ -75,9 +75,8 @@ hyperv-daemons
 
 %post
 
-# configure swap to a file - we can't use fallocate on XFS though
-# (see https://bugzilla.redhat.com/show_bug.cgi?id=1129205#c3)
-dd if=/dev/zero of=/swapfile bs=1M count=2048
+# configure swap to a file
+fallocate -l 2G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 echo "/swapfile none swap defaults 0 0" >> /etc/fstab
