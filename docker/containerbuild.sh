@@ -67,7 +67,7 @@ cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
-LABEL org.label-schema.schema-version = "1.0" \\
+LABEL org.label-schema.schema-version="1.0" \\
     org.label-schema.name="CentOS Base Image" \\
     org.label-schema.vendor="CentOS" \\
     org.label-schema.license="GPLv2" \\
