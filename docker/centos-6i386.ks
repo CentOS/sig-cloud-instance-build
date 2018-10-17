@@ -81,6 +81,7 @@ awk '(NF==0&&!done){print "override_install_langs='$LANG'\ntsflags=nodocs";done=
     < /etc/yum.conf > /etc/yum.conf.new
 mv /etc/yum.conf.new /etc/yum.conf
 echo 'container' > /etc/yum/vars/infra
+echo -e 'i386\n' > /etc/yum/vars/basearch
 
 rm -f /usr/lib/locale/locale-archive
 
