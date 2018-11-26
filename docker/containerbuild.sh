@@ -70,7 +70,6 @@ FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
 LABEL org.opencontainers.image.authors="centos-devel@centos.org, irc://#centos-devel@freenode" \\
-    org.opencontainers.image.created="$BUILDDATERFC3339" \\
     org.opencontainers.image.url="https://www.centos.org" \\
     org.opencontainers.image.documentation="https://github.com/docker-library/docs/tree/master/centos" \\
     org.opencontainers.image.source="https://git.centos.org" \\
@@ -78,6 +77,7 @@ LABEL org.opencontainers.image.authors="centos-devel@centos.org, irc://#centos-d
     org.opencontainers.image.licenses="GPL-2.0-only" \\
     org.opencontainers.image.title="CentOS Base Image" \\
     org.opencontainers.image.description="CentOS Base Image"
+LABEL org.opencontainers.image.created="$BUILDDATERFC3339"
 
 CMD ["/bin/bash"]
 EOF
