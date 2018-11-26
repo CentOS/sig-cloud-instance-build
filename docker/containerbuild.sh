@@ -14,7 +14,9 @@
 USAGE="USAGE: $(basename "$0") kickstart"
 KICKSTART="$1"
 KSNAME=${KICKSTART%.*}
-BUILDDATE=$(date +%Y%m%d)
+DATETIME=$(date +%s)
+BUILDDATE=$(date --utc --date="@$DATETIME" +%Y%m%d)
+BUILDDATERFC3339=$(date --rfc-3339=seconds --utc --date="@$DATETIME")
 BUILDROOT=/var/tmp/containers/$BUILDDATE/$KSNAME
 CONT_ARCH=$(uname -m)
 
@@ -67,11 +69,15 @@ cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
-LABEL org.label-schema.schema-version="1.0" \\
-    org.label-schema.name="CentOS Base Image" \\
-    org.label-schema.vendor="CentOS" \\
-    org.label-schema.license="GPLv2" \\
-    org.label-schema.build-date="$BUILDDATE"
+LABEL org.opencontainers.image.authors="centos-devel@centos.org, irc://#centos-devel@freenode" \\
+    org.opencontainers.image.created="$BUILDDATERFC3339" \\
+    org.opencontainers.image.url="https://www.centos.org" \\
+    org.opencontainers.image.documentation="https://github.com/docker-library/docs/tree/master/centos" \\
+    org.opencontainers.image.source="https://git.centos.org" \\
+    org.opencontainers.image.vendor="The CentOS Project" \\
+    org.opencontainers.image.licenses="GPL-2.0-only" \\
+    org.opencontainers.image.title="CentOS Base Image" \\
+    org.opencontainers.image.description="CentOS Base Image"
 
 CMD ["/bin/bash"]
 EOF
