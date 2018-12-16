@@ -34,8 +34,6 @@ chrony
 yum-utils
 hyperv-daemons
 open-vm-tools
--e2fsprogs
--btrfs-progs
 # Vagrant boxes aren't normally visible, no need for Plymouth
 -plymouth
 # Microcode updates cannot work in a VM
