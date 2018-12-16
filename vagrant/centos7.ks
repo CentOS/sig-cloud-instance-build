@@ -74,9 +74,8 @@ open-vm-tools
 #%end
 
 %post
-
-# configure swap to a file
-fallocate -l 2G /swapfile
+# configure swap to a file (fallocate doesn't work with c7 xfs)
+dd if=/dev/zero of=/swapfile bs=1M count=2048
 chmod 600 /swapfile
 mkswap /swapfile
 echo "/swapfile none swap defaults 0 0" >> /etc/fstab
