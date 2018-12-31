@@ -93,7 +93,7 @@ awk '(NF==0&&!done){print "override_install_langs=en_US.utf8\ntsflags=nodocs";do
     < /etc/yum.conf > /etc/yum.conf.new
 mv /etc/yum.conf.new /etc/yum.conf
 echo 'container' > /etc/yum/vars/infra
-echo -e 'i386\n' > /etc/yum/vars/basesearch
+echo -e 'i386\n' > /etc/yum/vars/basearch
 
 
 ##Setup locale properly
