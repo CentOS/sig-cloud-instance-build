@@ -1,0 +1,131 @@
+def c7arches = ["ppc64le", "x86_64", "aarch64"]
+def stages = [:]
+
+def onmyduffynode(script)
+{
+    ansiColor('xterm')
+    {
+        timestamps
+        {
+            sh 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root ${DUFFY_NODE}.ci.centos.org -t \"export REPO=${REPO}; export BRANCH=${BRANCH};\" "' + script + '"'
+        }
+    }
+}
+
+def syncfromduffynode(rsyncpath)
+{
+    sh 'rsync -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root " -Ha --include=' +  rsyncpath +  " ${DUFFY_NODE}.ci.centos.org:~/ ./"
+}
+
+
+
+def synctoduffynode(source)
+{
+    sh 'scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ' + source + " " + "root@" + "${DUFFY_NODE}.ci.centos.org:~/"
+}
+
+
+node('sig-cloudinstance'){
+    stage('make placeholder'){
+        env.time_stamp = sh(
+                script: "date +%y%m",
+                returnStdout: true
+            ).trim()
+
+        env.rsync_key = sh(
+                script: "head -c 13 ~/duffy.key",
+                returnStdout: true
+            )
+
+        sh 'mkdir -p /tmp/centos-7.${time_stamp}'
+        sh "RSYNC_PASSWORD='${rsync_key}' rsync -av /tmp/centos-7.${time_stamp} sig-cloudinstance@artifacts.ci.centos.org::sig-cloudinstance/"
+
+    }
+
+    stage('Checkout'){
+        checkout scm
+    }
+
+    c7arches.each { arch ->
+        stage("c7-$arch")
+        {
+            try
+            {
+                stage ("Allocate node")
+                {
+                    env.CICO_API_KEY = readFile("${env.HOME}/duffy.key").trim()
+                    duffy_rtn=sh(
+                                script: "cico --debug node get --arch ${arch} -f value -c hostname -c comment",
+                                returnStdout: true
+                                ).trim().tokenize(' ')
+                    env.DUFFY_NODE = duffy_rtn[0]
+                    env.DUFFY_SSID = duffy_rtn[1]
+                }
+                stage ("setup")
+                {
+                    onmyduffynode "yum -y install rsync docker lorax anaconda-tui yum-langpacks virt-install libvirt-python"
+                    synctoduffynode "docker/centos-7-${arch}.ks"
+                    synctoduffynode "docker/containerbuild.sh"
+
+                }
+
+                stage("build boot.iso")
+                {
+                    onmyduffynode "./containerbuild.sh centos-7-${arch}.ks"
+                }
+
+                stage("tag the container")
+                {
+                    env.time_stamp = sh(
+                            script: "date +%Y%m",
+                            returnStdout: true
+                        )
+                    onmyduffynode 'systemctl start docker'
+                    onmyduffynode "cat /var/tmp/containers/*/centos-7-${arch}/docker/centos-7-${arch}-docker.tar.xz | docker import - centos:7"
+                    onmyduffynode "docker tag centos:7 centos:centos7"
+                    onmyduffynode "docker tag centos:7 centos:centos7.6.${time_stamp}"
+                    onmyduffynode "docker tag centos:7 centos:7.6.${time_stamp}"
+                    onmyduffynode "docker tag centos:7 centos:latest"
+                }
+
+                stage("push to artifacts")
+                {
+
+                    env.time_stamp = sh(
+                            script: "date +%y%m",
+                            returnStdout: true
+                        ).trim()
+
+                    env.rsync_key = sh(
+                            script: "head -c 13 ~/duffy.key",
+                            returnStdout: true
+                        )
+
+
+                     onmyduffynode "mkdir -p /tmp/centos-7.${time_stamp}/${arch}"
+
+                     onmyduffynode "cp -r /var/tmp/containers/*/centos-7-${arch}/docker/*tar.xz /tmp/centos-7.${time_stamp}/${arch}"
+
+                     onmyduffynode "RSYNC_PASSWORD='${rsync_key}' rsync -av /tmp/centos-7.${time_stamp}/${arch}/ sig-cloudinstance@artifacts.ci.centos.org::sig-cloudinstance/centos-7.${time_stamp}/${arch}/"
+                }
+            }
+
+        catch (e)
+        {
+        currentBuild.result = "FAILURE"
+        throw e
+        }
+        finally
+        {
+            stage("Cleanup")
+            {
+                 sh 'cico node done ${DUFFY_SSID}'
+            }
+        }
+        }
+
+    }
+
+
+
+}
