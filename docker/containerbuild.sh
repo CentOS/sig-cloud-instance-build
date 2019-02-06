@@ -19,6 +19,10 @@ BUILDDATE=$(date --utc --date="@$DATETIME" +%Y%m%d)
 BUILDDATERFC3339=$(date --rfc-3339=seconds --utc --date="@$DATETIME")
 BUILDROOT=/var/tmp/containers/$BUILDDATE/$KSNAME
 CONT_ARCH=$(uname -m)
+ARCH="${KSNAME:8}"
+[ -n "${ARCH}" ] && ARCHD="-${ARCH}"
+RELEASEVER="${KSNAME:7:1}"
+COMMIT="$(git rev-parse HEAD)"
 
 #### Test for script requirements
 # Did we get passed a kickstart
@@ -69,13 +73,15 @@ cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
-LABEL org.opencontainers.image.authors="centos-devel@centos.org, irc://#centos-devel@freenode" \\
+LABEL org.opencontainers.image.ref.name=centos-6-i386-20181201="centos-${RELEASEVER}${ARCHD}" \\
+    org.opencontainers.image.authors="centos-devel@centos.org, irc://#centos-devel@freenode" \\
     org.opencontainers.image.url="https://www.centos.org" \\
     org.opencontainers.image.documentation="https://github.com/docker-library/docs/tree/master/centos" \\
-    org.opencontainers.image.source="https://git.centos.org" \\
+    org.opencontainers.image.source="https://github.com/CentOS/sig-cloud-instance-build.git" \\
+    org.opencontainers.image.revision="${COMMIT}" \\
     org.opencontainers.image.vendor="The CentOS Project" \\
     org.opencontainers.image.licenses="GPL-2.0-only" \\
-    org.opencontainers.image.title="CentOS Base Image" \\
+    org.opencontainers.image.title="CentOS ${RELEASEVER} Base Image ${ARCH}" \\
     org.opencontainers.image.description="CentOS Base Image"
 LABEL org.opencontainers.image.created="$BUILDDATERFC3339"
 
