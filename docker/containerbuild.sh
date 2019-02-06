@@ -73,7 +73,7 @@ cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
-LABEL org.opencontainers.image.ref.name=centos-6-i386-20181201="centos-${RELEASEVER}${ARCHD}" \\
+LABEL org.opencontainers.image.ref.name="centos-${RELEASEVER}${ARCHD}" \\
     org.opencontainers.image.authors="centos-devel@centos.org, irc://#centos-devel@freenode" \\
     org.opencontainers.image.url="https://www.centos.org" \\
     org.opencontainers.image.documentation="https://github.com/docker-library/docs/tree/master/centos" \\
