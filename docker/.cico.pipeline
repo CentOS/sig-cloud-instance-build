@@ -76,7 +76,7 @@ node('sig-cloudinstance'){
                 stage("tag the container")
                 {
                     env.time_stamp = sh(
-                            script: "date +%Y%m",
+                            script: "date +%Y%m%d",
                             returnStdout: true
                         )
                     onmyduffynode 'systemctl start docker'
