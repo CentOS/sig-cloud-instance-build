@@ -63,7 +63,7 @@ node('sig-cloudinstance'){
                 stage ("setup")
                 {
                     onmyduffynode "yum -y install rsync docker lorax anaconda-tui yum-langpacks virt-install libvirt-python"
-                    synctoduffynode "docker/centos-7-${arch}.ks"
+                    synctoduffynode "docker/centos-7${arch}.ks"
                     synctoduffynode "docker/containerbuild.sh"
 
                 }
