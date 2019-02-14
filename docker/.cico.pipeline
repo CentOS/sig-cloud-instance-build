@@ -70,7 +70,7 @@ node('sig-cloudinstance'){
 
                 stage("build boot.iso")
                 {
-                    onmyduffynode "./containerbuild.sh centos-7-${arch}.ks"
+                    onmyduffynode "./containerbuild.sh centos-7${arch}.ks"
                 }
 
                 stage("tag the container")
