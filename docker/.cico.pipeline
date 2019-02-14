@@ -27,7 +27,7 @@ def synctoduffynode(source)
 node('sig-cloudinstance'){
     stage('make placeholder'){
         env.time_stamp = sh(
-                script: "date +%y%m",
+                script: "date +%y%m%d",
                 returnStdout: true
             ).trim()
 
