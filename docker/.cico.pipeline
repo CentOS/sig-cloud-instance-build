@@ -63,14 +63,14 @@ node('sig-cloudinstance'){
                 stage ("setup")
                 {
                     onmyduffynode "yum -y install rsync docker lorax anaconda-tui yum-langpacks virt-install libvirt-python"
-                    synctoduffynode "docker/centos-7${arch}.ks"
+                    synctoduffynode "docker/centos-7-${arch}.ks"
                     synctoduffynode "docker/containerbuild.sh"
 
                 }
 
                 stage("build boot.iso")
                 {
-                    onmyduffynode "./containerbuild.sh centos-7${arch}.ks"
+                    onmyduffynode "./containerbuild.sh centos-7-${arch}.ks"
                 }
 
                 stage("tag the container")
@@ -91,7 +91,7 @@ node('sig-cloudinstance'){
                 {
 
                     env.time_stamp = sh(
-                            script: "date +%y%m",
+                            script: "date +%y%m%d",
                             returnStdout: true
                         ).trim()
 
@@ -118,13 +118,11 @@ node('sig-cloudinstance'){
         {
             stage("Cleanup")
             {
-                 sh 'cico node done ${DUFFY_SSID}'
+                 /*sh 'cico node done ${DUFFY_SSID}'*/
             }
         }
         }
 
     }
-
-
-
 }
+
