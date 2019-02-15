@@ -1,25 +1,21 @@
 def c7arches = ["ppc64le", "x86_64", "aarch64"]
 
-def onmyduffynode(script)
-{
-    ansiColor('xterm')
-    {
-        timestamps
-        {
+
+def onmyduffynode(script){
+    ansiColor('xterm'){
+        timestamps{
             sh 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root ${DUFFY_NODE}.ci.centos.org -t \"export REPO=${REPO}; export BRANCH=${BRANCH};\" "' + script + '"'
         }
     }
 }
 
-def syncfromduffynode(rsyncpath)
-{
+
+def syncfromduffynode(rsyncpath){
     sh 'rsync -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -l root " -Ha --include=' +  rsyncpath +  " ${DUFFY_NODE}.ci.centos.org:~/ ./"
 }
 
 
-
-def synctoduffynode(source)
-{
+def synctoduffynode(source){
     sh 'scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ' + source + " " + "root@" + "${DUFFY_NODE}.ci.centos.org:~/"
 }
 
@@ -46,12 +42,9 @@ node('sig-cloudinstance'){
     }
 
     c7arches.each { arch ->
-        stage("c7-$arch")
-        {
-            try
-            {
-                stage ("Allocate node")
-                {
+        stage("c7-$arch") {
+            try{
+                stage ("Allocate node"){
                     env.CICO_API_KEY = readFile("${env.HOME}/duffy.key").trim()
                     duffy_rtn=sh(
                                 script: "cico --debug node get --arch ${arch} -f value -c hostname -c comment",
@@ -60,21 +53,17 @@ node('sig-cloudinstance'){
                     env.DUFFY_NODE = duffy_rtn[0]
                     env.DUFFY_SSID = duffy_rtn[1]
                 }
-                stage ("setup")
-                {
+                stage ("setup"){
                     onmyduffynode "yum -y install rsync docker lorax anaconda-tui yum-langpacks virt-install libvirt-python"
                     synctoduffynode "docker/centos-7-${arch}.ks"
                     synctoduffynode "docker/containerbuild.sh"
-
                 }
 
-                stage("build boot.iso")
-                {
+                stage("build boot.iso"){
                     onmyduffynode "./containerbuild.sh centos-7-${arch}.ks"
                 }
 
-                stage("tag the container")
-                {
+                stage("tag the container"){
                     env.time_stamp = sh(
                             script: "date +%Y%m%d",
                             returnStdout: true
@@ -87,8 +76,7 @@ node('sig-cloudinstance'){
                     onmyduffynode "docker tag centos:7 centos:latest"
                 }
 
-                stage("push to artifacts")
-                {
+                stage("push to artifacts"){
 
                     env.time_stamp = sh(
                             script: "date +%y%m%d",
@@ -109,20 +97,16 @@ node('sig-cloudinstance'){
                 }
             }
 
-        catch (e)
-        {
+        catch (e){
         currentBuild.result = "FAILURE"
         throw e
         }
-        finally
-        {
-            stage("Cleanup")
-            {
+        finally{
+            stage("Cleanup") {
                  /*sh 'cico node done ${DUFFY_SSID}'*/
             }
         }
         }
-
     }
 }
 
