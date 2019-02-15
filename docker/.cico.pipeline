@@ -1,4 +1,4 @@
-def c7arches = ["x86_64"]
+def c7arches = ["ppc64le", "x86_64", "aarch64"]
 
 
 def onmyduffynode(script){
