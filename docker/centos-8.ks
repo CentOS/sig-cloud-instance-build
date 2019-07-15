@@ -74,7 +74,7 @@ echo "%_install_langs $LANG" > /etc/rpm/macros.image-language-conf
 # systemd fixes
 :> /etc/machine-id
 umount /run
-systemd-tmpfiles --create --bot
+systemd-tmpfiles --create --boot
 # mask mounts and login bits
 systemctl mask systemd-logind.service getty.target console-getty.service sys-fs-fuse-connections.mount systemd-remount-fs.service dev-hugepages.mount
 
