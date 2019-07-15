@@ -3,7 +3,7 @@
 # To use this kickstart, run the following command
 # livemedia-creator --make-tar \
 #   --iso=/path/to/boot.iso  \
-#   --ks=centos-7.ks \
+#   --ks=centos-8.ks \
 #   --image-name=centos-root.tar.xz
 #
 
