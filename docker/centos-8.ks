@@ -31,6 +31,8 @@ centos-release
 binutils
 -brotli
 bash
+hostname
+rootfiles
 coreutils-single
 glibc-minimal-langpack
 vim-minimal
