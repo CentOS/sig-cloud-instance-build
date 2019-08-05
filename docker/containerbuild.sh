@@ -68,11 +68,11 @@ cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
-LABEL org.label-schema.schema-version="1.0" \\
-    org.label-schema.name="CentOS Base Image" \\
-    org.label-schema.vendor="CentOS" \\
-    org.label-schema.license="GPLv2" \\
-    org.label-schema.build-date="$BUILDDATE_RFC3339"
+LABEL \\
+    org.opencontainers.image.title="CentOS Base Image" \\
+    org.opencontainers.image.vendor="CentOS" \\
+    org.opencontainers.image.licenses="GPL-2.0-only" \\
+    org.opencontainers.image.created="$BUILDDATE_RFC3339"
 
 CMD ["/bin/bash"]
 EOF
