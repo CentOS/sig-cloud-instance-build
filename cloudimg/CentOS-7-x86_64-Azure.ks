@@ -21,13 +21,12 @@ network --hostname=localhost.localdomain
 firewall --enabled --service=ssh
 
 # Use network installation
-url --url="mirror.centos.org/centos/7/os/x86_64"
-repo --name "os" --baseurl="http://mirror.centos.org/centos/7/os/x86_64/" --cost=100
-repo --name "updates" --baseurl="http://mirror.centos.org/centos/7/updates/x86_64/" --cost=100
-repo --name "extras" --baseurl="http://mirror.centos.org/centos/7/extras/x86_64/" --cost=100
-
+url --url="mirrorsnap.centos.org/DATESTAMP/centos/7/os/x86_64" 
+repo --name "os" --baseurl="http://mirrorsnap.centos.org/DATESTAMP/centos/7/os/x86_64/" --cost=100
+repo --name "updates" --baseurl="http://mirrorsnap.centos.org/DATESTAMP/centos/7/updates/x86_64/" --cost=100
+repo --name "extras" --baseurl="http://mirrorsnap.centos.org/DATESTAMP/centos/7/extras/x86_64/" --cost=100
 # Root password
-rootpw --plaintext "to_be_disabled"
+rootpw --iscrypted nothing
 selinux --enforcing
 
 # System services
@@ -36,7 +35,7 @@ services --disabled="kdump,abrtd" --enabled="network,sshd,rsyslog,chronyd,waagen
 %end
 
 # System timezone
-timezone Etc/UTC --isUtc
+timezone UTC --isUtc
 
 # Disk partitioning information
 zerombr
@@ -68,10 +67,11 @@ hypervkvpd
 %end
 
 
-%post --erroronfail --log=/var/log/anaconda/post-install.log
+%post --erroronfail 
 #!/bin/bash
 
-usermod root -p '!!'
+passwd -d root
+passwd -l root
 
 # setup systemd to boot to the right runlevel
 rm -f /etc/systemd/system/default.target
@@ -79,6 +79,7 @@ ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 
 # Set the kernel cmdline
 sed -i 's/^\(GRUB_CMDLINE_LINUX\)=".*"$/\1="console=tty1 console=ttyS0,115200n8 earlyprintk=ttyS0,115200 rootdelay=300 net.ifnames=0 scsi_mod.use_blk_mq=y"/g' /etc/default/grub
+
 
 # Enable grub serial console
 echo 'GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1"' >> /etc/default/grub
@@ -105,9 +106,6 @@ dracut -v -f "/boot/initramfs-${kversion}.img" "$kversion"
 # Import CentOS public key
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 
-# Enable SSH keepalive
-sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
-
 # Configure network
 cat << EOF > /etc/sysconfig/network-scripts/ifcfg-eth0
 DEVICE=eth0
@@ -118,7 +116,7 @@ USERCTL=no
 PEERDNS=yes
 IPV6INIT=no
 NM_CONTROLLED=no
-PERSISTENT_DHCLIENT=yes
+PERSISTENT_DHCLIENT="1"
 EOF
 
 cat << EOF > /etc/sysconfig/network
@@ -143,9 +141,8 @@ EOF
 
 # Change dhcp client retry/timeouts to resolve #6866
 cat  >> /etc/dhcp/dhclient.conf << EOF
-
-timeout 300;
-retry 60;
+timeout 300
+retry 60
 EOF
 
 # Blacklist the nouveau driver as it is incompatible
