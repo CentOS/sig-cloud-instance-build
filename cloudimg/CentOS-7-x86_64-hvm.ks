@@ -1,20 +1,27 @@
+# System authorization information
 auth --enableshadow --passalgo=sha512
+# Reboot after installation
 reboot
-url --url="mirror.centos.org/centos/7/os/x86_64"
+# Use network installation
+url --url="mirrorsnap.centos.org/DATESTAMP/centos/7/os/x86_64"
+# Firewall configuration
 firewall --enabled --service=ssh
 firstboot --disable
 ignoredisk --only-use=vda
+# Keyboard layouts
+# old format: keyboard us
+# new format:
 keyboard --vckeymap=us --xlayouts='us'
 # System language
 lang en_US.UTF-8
-repo --name "os" --baseurl="http://mirror.centos.org/centos/7/os/x86_64/" --cost=100
-repo --name "updates" --baseurl="http://mirror.centos.org/centos/7/updates/x86_64/" --cost=100
-repo --name "extras" --baseurl="http://mirror.centos.org/centos/7/extras/x86_64/" --cost=100
+repo --name "os" --baseurl="http://mirrorsnap.centos.org/DATESTAMP/centos/7/os/x86_64/" --cost=100
+repo --name "updates" --baseurl="http://mirrorsnap.centos.org/DATESTAMP/centos/7/updates/x86_64/" --cost=100
+repo --name "extras" --baseurl="http://mirrorsnap.centos.org/DATESTAMP/centos/7/extras/x86_64/" --cost=100
 # Network information
 network  --bootproto=dhcp
 network  --hostname=localhost.localdomain
 # Root password
-rootpw --iscrypted thereisnopasswordanditslocked
+rootpw --iscrypted nothing
 selinux --enforcing
 services --disabled="kdump" --enabled="network,sshd,rsyslog,chronyd"
 timezone UTC --isUtc
@@ -25,10 +32,16 @@ clearpart --all --initlabel
 part / --fstype="xfs" --ondisk=vda --size=4096 --grow
 
 %post --erroronfail
+
+# workaround anaconda requirements
 passwd -d root
 passwd -l root
 
-# pvgrub support
+# Create grub.conf for EC2. This used to be done by appliance creator but
+# anaconda doesn't do it. And, in case appliance-creator is used, we're
+# overriding it here so that both cases get the exact same file.
+# Note that the console line is different -- that's because EC2 provides
+# different virtual hardware, and this is a convenient way to act differently
 echo -n "Creating grub.conf for pvgrub"
 rootuuid=$( awk '$2=="/" { print $1 };'  /etc/fstab )
 mkdir /boot/grub
@@ -40,23 +53,39 @@ for kv in $( ls -1v /boot/vmlinuz* |grep -v rescue |sed s/.*vmlinuz-//  ); do
   echo -e "\tinitrd /boot/initramfs-$kv.img" >> /boot/grub/grub.conf
   echo
 done
+
+#link grub.conf to menu.lst for ec2 to work
+echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
 ln -sf grub.conf /boot/grub/menu.lst
 ln -sf /boot/grub/grub.conf /etc/grub.conf
 
 # setup systemd to boot to the right runlevel
+echo -n "Setting default runlevel to multiuser text mode"
 rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 echo .
 
+# this is installed by default but we don't need it in virt
+echo "Removing linux-firmware package."
 yum -C -y remove linux-firmware
 
 # Remove firewalld; it is required to be present for install/image building.
-# but we dont ship it in cloud
+echo "Removing firewalld."
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
+
+# remove avahi and networkmanager
+echo "Removing avahi/zeroconf and NetworkManager"
 yum -C -y remove avahi\* Network\*
+
+echo -n "Getty fixes"
+# although we want console output going to the serial console, we don't
+# actually have the opportunity to login there. FIX.
+# we don't really need to auto-spawn _any_ gettys.
 sed -i '/^#NAutoVTs=.*/ a\
 NAutoVTs=0' /etc/systemd/logind.conf
 
+echo -n "Network fixes"
+# initscripts don't like this file to be missing.
 cat > /etc/sysconfig/network << EOF
 NETWORKING=yes
 NOZEROCONF=yes
@@ -79,6 +108,7 @@ IPV6INIT="no"
 PERSISTENT_DHCLIENT="1"
 EOF
 
+# set virtual-guest as default profile for tuned
 echo "virtual-guest" > /etc/tuned/active_profile
 
 # generic localhost names
@@ -89,6 +119,10 @@ cat > /etc/hosts << EOF
 EOF
 echo .
 
+# Because memory is scarce resource in most cloud/virt environments,
+# and because this impedes forensics, we are differing from the Fedora
+# default of having /tmp on tmpfs.
+echo "Disabling tmpfs for /tmp."
 systemctl mask tmp.mount
 
 cat <<EOL > /etc/sysconfig/kernel
@@ -103,9 +137,18 @@ EOL
 # make sure firstboot doesn't start
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 
+# workaround https://bugzilla.redhat.com/show_bug.cgi?id=966888
+#if ! grep -q growpart /etc/cloud/cloud.cfg; then
+#  sed -i 's/ - resizefs/ - growpart\n - resizefs/' /etc/cloud/cloud.cfg
+#fi
+
+
+#echo -e 'cloud-user\tALL=(ALL)\tNOPASSWD: ALL' >> /etc/sudoers
+
+echo "Cleaning old yum repodata."
 yum clean all
 
-# XXX instance type markers - MUST match CentOS Infra expectation
+echo "set instance type markers"
 echo 'genclo' > /etc/yum/vars/infra
 
 # chance dhcp client retry/timeouts to resolve #6866
@@ -115,6 +158,15 @@ timeout 300;
 retry 60;
 EOF
 
+# clean up installation logs"
+rm -rf /var/log/yum.log
+rm -rf /var/lib/yum/*
+rm -rf /root/install.log
+rm -rf /root/install.log.syslog
+rm -rf /root/anaconda-ks.cfg
+rm -rf /var/log/anaconda*
+rm -rf /root/anac*
+
 echo "Fixing SELinux contexts."
 touch /var/log/cron
 touch /var/log/boot.log
@@ -123,6 +175,12 @@ mkdir -p /var/cache/yum
 
 # reorder console entries
 sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /boot/grub2/grub.cfg
+
+#echo "Zeroing out empty space."
+# This forces the filesystem to reclaim space from deleted files
+dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
+rm -f /var/tmp/zeros
+echo "(Don't worry -- that out-of-space error was expected.)"
 
 %end
 
