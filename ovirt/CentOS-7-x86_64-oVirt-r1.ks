@@ -12,7 +12,7 @@ repo --name "updates" --baseurl="http://mirror.centos.org/centos/7/updates/x86_6
 repo --name "extras" --baseurl="http://mirror.centos.org/centos/7/extras/x86_64/" --cost=100
 
 # oVirt specific repos
-repo --name "centos-ovirt42" --baseurl="http://mirror.centos.org/centos/7/virt/x86_64/ovirt-4.2/" --cost=100
+repo --name "centos-ovirt43" --baseurl="http://mirror.centos.org/centos/7/virt/x86_64/ovirt-4.3/" --cost=100
 
 # Network information
 network  --bootproto=dhcp
