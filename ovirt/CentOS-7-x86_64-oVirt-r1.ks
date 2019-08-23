@@ -128,6 +128,8 @@ mkdir -p /var/cache/yum
 # reorder console entries
 sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /boot/grub2/grub.cfg
 
+# oVirt specific service
+systemctl enable ovirt-guest-agent.service
 %end
 
 %packages
