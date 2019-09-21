@@ -136,12 +136,18 @@ pushd /etc/dracut.conf.d
 echo 'add_drivers+=" vmw_pvscsi "' > vmware-fusion-drivers.conf
 echo 'add_drivers+=" hv_netvsc hv_storvsc hv_utils hv_vmbus hid-hyperv "' > hyperv-drivers.conf
 popd
+
+# Fix for issue 156, CentOS 6 not booting on HyperV
+echo blacklist hyperv_fb > /etc/modprobe.d/hyperv_fb.conf
+
 # Fix the SELinux context of the new files
 restorecon -f - <<EOF
 /etc/sudoers.d/vagrant
 /etc/dracut.conf.d/vmware-fusion-drivers.conf
 /etc/dracut.conf.d/hyperv-drivers.conf
+/etc/modprobe.d/hyperv_fb.conf
 EOF
+
 # Rerun dracut for the installed kernel (not the running kernel):
 KERNEL_VERSION=$(rpm -q kernel --qf '%{version}-%{release}.%{arch}\n')
 dracut -f /boot/initramfs-${KERNEL_VERSION}.img ${KERNEL_VERSION}
