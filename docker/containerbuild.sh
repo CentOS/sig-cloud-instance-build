@@ -63,7 +63,7 @@ mv /var/tmp/"$KSNAME"-docker.tar.xz $BUILDROOT/docker/
 
 # Create a Dockerfile to go along with the rootfs.
 
-BUILDDATE_RFC3339="$(date -d $BUILDDATE --rfc-3339=date)"
+BUILDDATE_RFC3339="$(date -d $BUILDDATE --rfc-3339=seconds)"
 cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
