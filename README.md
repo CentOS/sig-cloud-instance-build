@@ -1,6 +1,6 @@
 # Build-Instance
 
-This git repo contains kickstart files that define how the various CentOS Cloud Instances are built. These kickstarts are parsed withi `virt-install`. Every kickstart must be named in the following convention:
+This git repo contains kickstart files that define how the various CentOS Cloud Instances are built. These kickstarts are parsed with `virt-install`. Every kickstart must be named in the following convention:
 
 ```
 CentOS-<release ver>-<arch>-<target>-<tag>.ks
