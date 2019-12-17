@@ -63,15 +63,21 @@ mv /var/tmp/"$KSNAME"-docker.tar.xz $BUILDROOT/docker/
 
 # Create a Dockerfile to go along with the rootfs.
 
+BUILDDATE_RFC3339="$(date -d $BUILDDATE --rfc-3339=seconds)"
 cat << EOF > $BUILDROOT/docker/Dockerfile
 FROM scratch
 ADD $KSNAME-docker.tar.xz /
 
-LABEL org.label-schema.schema-version="1.0" \\
+LABEL \\
+    org.label-schema.schema-version="1.0" \\
     org.label-schema.name="CentOS Base Image" \\
     org.label-schema.vendor="CentOS" \\
     org.label-schema.license="GPLv2" \\
-    org.label-schema.build-date="$BUILDDATE"
+    org.label-schema.build-date="$BUILDDATE" \\
+    org.opencontainers.image.title="CentOS Base Image" \\
+    org.opencontainers.image.vendor="CentOS" \\
+    org.opencontainers.image.licenses="GPL-2.0-only" \\
+    org.opencontainers.image.created="$BUILDDATE_RFC3339"
 
 CMD ["/bin/bash"]
 EOF
