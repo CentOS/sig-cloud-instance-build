@@ -98,6 +98,7 @@ rng-tools
 cracklib
 cracklib-dicts
 centos-release
+bind-utils
 
 # pull firmware packages out
 -aic94xx-firmware
